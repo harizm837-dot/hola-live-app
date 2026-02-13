@@ -1,2 +1,79 @@
-<h2>Live</h2>
-<p>Шууд дамжуулалт эхэлнэ.</p>
+<div class="live-container">
+
+  <h2>🔥 Hola Live Stream</h2>
+
+  <div class="stream-box">
+    <p>🎥 Streamer: streamer_1</p>
+  </div>
+
+  <div class="wallet-box">
+    💰 Миний баланс: <span id="balance">0</span> токен
+  </div>
+
+  <div class="gift-list" id="giftList"></div>
+
+</div>
+
+<script type="module">
+
+import { UserAPI } from "../assets/js/api/user.api.js";
+import { GiftAPI } from "../assets/js/api/gift.api.js";
+import { EconomyAPI } from "../assets/js/api/economy.api.js";
+
+const balanceEl = document.getElementById("balance");
+const giftListEl = document.getElementById("giftList");
+
+const streamerId = "streamer_1";
+
+async function init(){
+
+  const user = await UserAPI.getCurrentUser();
+
+  // Initial credit if first time
+  const ledger = JSON.parse(localStorage.getItem("hola_ledger"));
+  if(!ledger || ledger.length === 0){
+    localStorage.setItem("hola_ledger", JSON.stringify([
+      {
+        id:"init_tx",
+        from:null,
+        to:user.id,
+        type:"SYSTEM_INIT",
+        amount:1000,
+        createdAt:Date.now()
+      }
+    ]));
+  }
+
+  updateBalance(user.id);
+
+  const gifts = await GiftAPI.getAllGifts();
+
+  gifts.forEach(gift => {
+
+    const btn = document.createElement("button");
+    btn.innerText = `${gift.name} (${gift.price})`;
+    btn.className = "gift-btn";
+
+    btn.onclick = async () => {
+      try{
+        await EconomyAPI.sendGift(user.id, streamerId, gift.id);
+        updateBalance(user.id);
+        alert("🎉 Gift илгээгдлээ!");
+      }catch(err){
+        alert(err.message);
+      }
+    };
+
+    giftListEl.appendChild(btn);
+  });
+
+}
+
+async function updateBalance(userId){
+  const bal = await EconomyAPI.getBalance(userId);
+  balanceEl.innerText = bal;
+}
+
+init();
+
+</script>
