@@ -1,0 +1,29 @@
+<h2>Урилга</h2>
+
+<p>Таны код:</p>
+<p id="refCode"></p>
+
+<button onclick="copyCode()">Хуулбарлах</button>
+<button onclick="shareCode()">Хуваалцах</button>
+
+<script>
+const code = ReferralEngine.generate();
+document.getElementById("refCode").innerText = code;
+
+function copyCode(){
+  navigator.clipboard.writeText(code);
+  Notify.toast("Код хуулбарлагдлаа");
+}
+
+function shareCode(){
+  if(navigator.share){
+    navigator.share({
+      title:"Hola Live",
+      text:"Надтай нэгдээрэй! Код: " + code,
+      url:window.location.origin
+    });
+  }else{
+    Notify.toast("Share боломжгүй");
+  }
+}
+</script>
