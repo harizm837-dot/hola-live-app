@@ -1,0 +1,23 @@
+<h2>Токен дэвтэр</h2>
+<div id="ledgerList"></div>
+
+<script>
+let state = State.get();
+let ledger = state.ledger || [];
+let container = document.getElementById("ledgerList");
+
+if(ledger.length===0){
+  container.innerHTML="<p>Гүйлгээ байхгүй</p>";
+}else{
+  ledger.reverse().forEach(item=>{
+    let div=document.createElement("div");
+    div.style.marginBottom="10px";
+    div.innerHTML = `
+      <strong>${item.type==="credit" ? "+" : "-"}${item.amount}</strong>
+      <div>${item.reason}</div>
+      <small>${new Date(item.date).toLocaleString()}</small>
+    `;
+    container.appendChild(div);
+  });
+}
+</script>
