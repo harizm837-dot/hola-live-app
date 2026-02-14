@@ -1,82 +1,9 @@
-<div class="live-container">
+<h2>Live</h2>
 
-  <h2>🔥 Hola Live Stream</h2>
+<p>Токен: <span id="liveTokens"></span></p>
 
-  <div class="stream-box">
-    <p>🎥 Streamer: streamer_1</p>
-  </div>
+<button onclick="GiftEngine.send(50)">🎁 50 токен бэлэг</button>
 
-  <div class="wallet-box">
-    💰 Миний баланс: <span id="balance">0</span> токен
-  </div>
-
-  <div class="gift-list" id="giftList"></div>
-
-</div>
-
-<script type="module">
-
-import { UserAPI } from "/hola-live-app/assets/js/api/user.api.js";
-import { GiftAPI } from "/hola-live-app/assets/js/api/gift.api.js";
-import { EconomyAPI } from "/hola-live-app/assets/js/api/economy.api.js";
-
-const balanceEl = document.getElementById("balance");
-const giftListEl = document.getElementById("giftList");
-
-const streamerId = "streamer_1";
-
-async function init(){
-
-  const user = await UserAPI.getCurrentUser();
-
-  if(!localStorage.getItem("hola_ledger")){
-    localStorage.setItem("hola_ledger", JSON.stringify([
-      {
-        id:"init_tx",
-        from:null,
-        to:user.id,
-        type:"SYSTEM_INIT",
-        amount:1000,
-        createdAt:Date.now()
-      }
-    ]));
-  }
-
-  updateBalance(user.id);
-
-  const gifts = await GiftAPI.getAllGifts();
-
-  gifts.forEach(gift => {
-
-    const btn = document.createElement("button");
-    btn.innerText = `${gift.name} (${gift.price})`;
-    btn.style.margin = "8px";
-    btn.style.padding = "12px";
-    btn.style.borderRadius = "10px";
-    btn.style.border = "none";
-    btn.style.background = "#00d4ff";
-    btn.style.color = "#000";
-
-    btn.onclick = async () => {
-      try{
-        await EconomyAPI.sendGift(user.id, streamerId, gift.id);
-        updateBalance(user.id);
-        alert("🎉 Gift илгээгдлээ!");
-      }catch(err){
-        alert(err.message);
-      }
-    };
-
-    giftListEl.appendChild(btn);
-  });
-
-}
-
-async function updateBalance(userId){
-  const bal = await EconomyAPI.getBalance(userId);
-  balanceEl.innerText = bal;
-}
-
-init();
-
+<script>
+document.getElementById("liveTokens").innerText = State.get().user.tokens;
 </script>
