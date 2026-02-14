@@ -1,24 +1,26 @@
-import { Wallet } from "./wallet.js";
-import { Ledger } from "./ledger.js";
+window.ReferralEngine = {
 
-export const Referral = {
+  generate(){
+    let state = State.get();
+    if(!state.user.refCode){
+      state.user.refCode = "HOLA" + Math.floor(Math.random()*100000);
+      State.update(state);
+    }
+    return state.user.refCode;
+  },
 
-  applyBonus(userId, amount){
+  apply(code){
+    let state = State.get();
+    if(state.user.usedReferral){
+      Notify.toast("Та аль хэдийн код ашигласан");
+      return;
+    }
 
-    const user = JSON.parse(localStorage.getItem("hola_user"));
-    if(!user || !user.invitedBy) return;
+    state.user.usedReferral = true;
+    State.update(state);
 
-    const bonus = Math.floor(amount * 0.05);
-
-    Ledger.addTransaction({
-      id: "tx_" + (Date.now()+2),
-      from: null,
-      to: user.invitedBy,
-      type: "REFERRAL_BONUS",
-      amount: bonus,
-      createdAt: Date.now()
-    });
-
+    TokenEngine.add(200,"Referral bonus");
+    Notify.toast("Referral амжилттай!");
   }
 
 };
