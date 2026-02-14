@@ -1,5 +1,10 @@
-<h2>Нүүр хуудас</h2>
+<h2>Нүүр</h2>
+
 <p>Токен: <span id="tokenCount"></span></p>
+
+<button onclick="TokenEngine.add(100,'Daily bonus')">
+Өдөр тутмын бонус
+</button>
 
 <script>
 document.getElementById("tokenCount").innerText = State.get().user.tokens;
