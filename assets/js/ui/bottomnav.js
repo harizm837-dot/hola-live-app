@@ -8,6 +8,8 @@ window.BottomNav = {
       <button class="nav-btn" data-page="live">Live</button>
       <button class="nav-btn" data-page="invite">Урилга</button>
       <button class="nav-btn" data-page="ledger">Дэвтэр</button>
+      <button class="nav-btn" data-page="streamer">Аналитик</button>
+      <button class="nav-btn" data-page="moderator">Mod</button>
       <button class="nav-btn" data-page="profile">Профайл</button>
     `;
 
