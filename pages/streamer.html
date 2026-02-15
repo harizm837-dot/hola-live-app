@@ -1,0 +1,12 @@
+<h2>Streamer Аналитик</h2>
+
+<div id="stats"></div>
+
+<script>
+let stats = AnalyticsEngine.getStats();
+
+document.getElementById("stats").innerHTML = `
+<p>Нийт бэлэг: ${stats.totalGifts}</p>
+<p>Нийт орлого: ${stats.totalEarnings} токен</p>
+`;
+</script>
