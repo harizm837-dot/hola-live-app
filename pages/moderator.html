@@ -1,0 +1,18 @@
+<h2>Зохицуулагч</h2>
+
+<input id="username" placeholder="Username">
+
+<button onclick="mute()">Mute</button>
+<button onclick="ban()">Ban</button>
+
+<script>
+function mute(){
+  let name = document.getElementById("username").value;
+  ModeratorEngine.muteUser(name);
+}
+
+function ban(){
+  let name = document.getElementById("username").value;
+  ModeratorEngine.banUser(name);
+}
+</script>
