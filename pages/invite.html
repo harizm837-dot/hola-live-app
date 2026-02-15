@@ -3,8 +3,9 @@
 <p>Таны код:</p>
 <p id="refCode"></p>
 
+<canvas id="qrCanvas"></canvas>
+
 <button onclick="copyCode()">Хуулбарлах</button>
-<button onclick="shareCode()">Хуваалцах</button>
 
 <script>
 const code = ReferralEngine.generate();
@@ -15,15 +16,23 @@ function copyCode(){
   Notify.toast("Код хуулбарлагдлаа");
 }
 
-function shareCode(){
-  if(navigator.share){
-    navigator.share({
-      title:"Hola Live",
-      text:"Надтай нэгдээрэй! Код: " + code,
-      url:window.location.origin
-    });
-  }else{
-    Notify.toast("Share боломжгүй");
+function generateQR(text){
+  const canvas = document.getElementById("qrCanvas");
+  const ctx = canvas.getContext("2d");
+  canvas.width=200;
+  canvas.height=200;
+  ctx.fillStyle="#000";
+  ctx.fillRect(0,0,200,200);
+  ctx.fillStyle="#00eaff";
+  for(let i=0;i<100;i++){
+    ctx.fillRect(
+      Math.random()*200,
+      Math.random()*200,
+      5,
+      5
+    );
   }
 }
+
+generateQR(code);
 </script>
