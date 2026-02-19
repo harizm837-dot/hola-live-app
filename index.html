@@ -7,21 +7,26 @@
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#000000">
 <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
-<link rel="stylesheet" href="assets/css/variables.css">
-<link rel="stylesheet" href="assets/css/animations.css">
+
 <style>
-/* Minimal inline style, core visual handled by CSS files */
-body { margin:0; overflow:hidden; background:#000; color:#fff; font-family:system-ui,-apple-system,BlinkMacSystemFont; }
-#intro { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1.6rem; text-align:center; z-index:10; transition:opacity 1.2s ease, transform 1.2s ease; }
-#intro.hide { opacity:0; transform:scale(1.05); pointer-events:none; }
-#logo { font-size:2.8rem; letter-spacing:.18em; font-weight:600; }
-#logo span { display:inline-block; opacity:0; transform:translate(var(--x),var(--y)) scale(0.6); animation:assemble 1.4s cubic-bezier(.2,.8,.2,1) forwards; }
-.tagline { font-size:.95rem; opacity:.7; letter-spacing:.15em; }
-#enterBtn { margin-top:1.2rem; padding:.8rem 2.8rem; border-radius:999px; border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.05); backdrop-filter:blur(8px); color:#fff; font-size:.9rem; cursor:pointer; transition:.3s; }
-#enterBtn:hover { background:#00eaff; color:#000; box-shadow:0 0 25px #00eaff; }
-canvas { width:100vw; height:100vh; display:block; }
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,BlinkMacSystemFont;}
+body{background:#000;color:#fff;overflow:hidden;}
+body::before{content:"";position:fixed;inset:0;background:radial-gradient(circle at 20% 30%, #001933, transparent 40%), radial-gradient(circle at 80% 70%, #002b55, transparent 50%), #000;animation:bgMove 25s linear infinite;z-index:-2;}
+@keyframes bgMove{0%{transform:scale(1) translate(0,0);}50%{transform:scale(1.08) translate(-40px,-30px);}100%{transform:scale(1) translate(0,0);}}
+#intro{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.6rem;text-align:center;z-index:10;transition:opacity 1.2s ease, transform 1.2s ease;}
+#intro.hide{opacity:0;transform:scale(1.05);pointer-events:none;}
+#logo{font-size:2.8rem;letter-spacing:0.18em;font-weight:600;}
+#logo span{display:inline-block;opacity:0;transform:translate(var(--x),var(--y)) scale(0.6);animation:assemble 1.4s cubic-bezier(.2,.8,.2,1) forwards;}
+@keyframes assemble{to{opacity:1;transform:translate(0,0) scale(1);}}
+.tagline{font-size:.95rem;opacity:.7;letter-spacing:.15em;}
+#enterBtn{margin-top:1.2rem;padding:.8rem 2.8rem;border-radius:999px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.05);backdrop-filter:blur(8px);color:#fff;font-size:.9rem;letter-spacing:.15em;cursor:pointer;transition:.3s;}
+#enterBtn:hover{background:#00eaff;color:#000;box-shadow:0 0 25px #00eaff;}
+.pulse{position:absolute;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,#00eaff33,transparent 60%);animation:pulseAnim 4s ease-in-out infinite;z-index:-1;}
+@keyframes pulseAnim{0%,100%{transform:scale(.8);opacity:.4;}50%{transform:scale(1.4);opacity:.8;}}
+canvas{width:100vw;height:100vh;display:block;}
 </style>
 </head>
+
 <body>
 <div id="intro">
   <div class="pulse"></div>
@@ -33,12 +38,13 @@ canvas { width:100vw; height:100vh; display:block; }
   <div class="tagline">STREAM • TOKEN • ENERGY</div>
   <button id="enterBtn">НЭВТРЭХ</button>
 </div>
+
 <canvas id="scene"></canvas>
 
-<script src="assets/js/core/install.js"></script>
-<script src="assets/js/core/state.js"></script>
+<footer style="position:fixed;bottom:6px;width:100%;text-align:center;font-size:0.7rem;opacity:0.5;">© 2026 Hola Live. Бүх эрх хуулиар хамгаалагдсан.</footer>
+
 <script>
-// Letter animation random start
+/* Letter assemble */
 document.querySelectorAll("#logo span").forEach(letter=>{
   const x=(Math.random()-0.5)*400;
   const y=(Math.random()-0.5)*250;
@@ -46,7 +52,7 @@ document.querySelectorAll("#logo span").forEach(letter=>{
   letter.style.setProperty("--y",y+"px");
 });
 
-// Three.js scene
+/* THREE.js scene */
 const canvas=document.getElementById("scene");
 const scene=new THREE.Scene();
 const camera=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,.1,1000);
@@ -55,29 +61,30 @@ const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
 renderer.setSize(window.innerWidth,window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
 
-// Sphere
+/* Core sphere */
 const geometry=new THREE.IcosahedronGeometry(1,1);
-const material=new THREE.MeshStandardMaterial({color:0x00eaff, emissive:0x00eaff, emissiveIntensity:.6, metalness:.3, roughness:.4, wireframe:true});
+const material=new THREE.MeshStandardMaterial({color:0x00eaff,emissive:0x00eaff,emissiveIntensity:.6,metalness:.3,roughness:.4,wireframe:true});
 const sphere=new THREE.Mesh(geometry,material);
 scene.add(sphere);
 
-// Lights
+/* Lights */
 const light1=new THREE.PointLight(0x00eaff,2);
 light1.position.set(3,3,3);
 scene.add(light1);
-scene.add(new THREE.AmbientLight(0xffffff,.2));
+const ambient=new THREE.AmbientLight(0xffffff,.2);
+scene.add(ambient);
 
-// Particles
+/* Particles */
 const particlesCount=800;
 const positions=new Float32Array(particlesCount*3);
-for(let i=0;i<particlesCount*3;i++) positions[i]=(Math.random()-0.5)*20;
+for(let i=0;i<particlesCount*3;i++){positions[i]=(Math.random()-0.5)*20;}
 const particlesGeometry=new THREE.BufferGeometry();
 particlesGeometry.setAttribute("position",new THREE.BufferAttribute(positions,3));
 const particlesMaterial=new THREE.PointsMaterial({size:.03});
 const particles=new THREE.Points(particlesGeometry,particlesMaterial);
 scene.add(particles);
 
-// Animate
+/* Animate */
 function animate(){
   requestAnimationFrame(animate);
   sphere.rotation.x+=0.003;
@@ -87,23 +94,22 @@ function animate(){
 }
 animate();
 
-// Resize
+/* Resize */
 window.addEventListener("resize",()=>{
   camera.aspect=window.innerWidth/window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth,window.innerHeight);
 });
 
-// Enter
+/* Enter */
 document.getElementById("enterBtn").addEventListener("click",()=>{
   document.getElementById("intro").classList.add("hide");
-  setTimeout(()=>{ window.location.href="app.html"; },1200);
+  setTimeout(()=>{window.location.href="app.html";},1200);
 });
 
-// Service Worker
-if("serviceWorker" in navigator){
-  navigator.serviceWorker.register("sw.js");
-}
+/* Service Worker */
+if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js");}
 </script>
+
 </body>
 </html>
