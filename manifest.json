@@ -1,10 +1,13 @@
 {
-  "name": "Hola Live",
-  "short_name": "Hola",
+  "name": "Hola Live Platform",
+  "short_name": "HolaLive",
+  "description": "Role-based Real-time Live Streaming Platform",
   "start_url": "index.html",
+  "scope": "./",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#000000",
-  "theme_color": "#000000",
+  "theme_color": "#ff0050",
   "icons": [
     {
       "src": "assets/img/logo-192.png",
