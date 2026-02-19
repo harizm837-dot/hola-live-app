@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hola Live - Дэлгүүр</title>
+
+<link rel="stylesheet" href="../assets/css/reset.css">
+<link rel="stylesheet" href="../assets/css/variables.css">
+<link rel="stylesheet" href="../assets/css/layout.css">
+<link rel="stylesheet" href="../assets/css/components.css">
+<link rel="stylesheet" href="../assets/css/animations.css">
+
+<style>
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:#000;
+    color:#fff;
+    overflow-x:hidden;
+}
+
+.container{
+    max-width:700px;
+    margin:0 auto;
+    padding:20px;
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+}
+
+h1{
+    font-size:2rem;
+    text-align:center;
+    letter-spacing:.1em;
+}
+
+.tagline{
+    font-size:1rem;
+    opacity:.7;
+    text-align:center;
+}
+
+.wallet{
+    text-align:right;
+    font-size:14px;
+    margin-bottom:10px;
+}
+
+.shop-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:16px;
+}
+
+.shop-item{
+    background:#111;
+    border-radius:12px;
+    padding:12px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    cursor:pointer;
+    transition:.3s;
+    position:relative;
+}
+
+.shop-item:hover{
+    transform:scale(1.05);
+    box-shadow:0 0 15px #00eaff;
+}
+
+.shop-item img{
+    width:80px;
+    height:80px;
+    margin-bottom:8px;
+}
+
+.shop-item .price{
+    font-size:14px;
+    color:#0ff;
+}
+
+.shop-item .buy-btn{
+    margin-top:6px;
+    padding:6px 14px;
+    background:#00eaff;
+    color:#000;
+    border:none;
+    border-radius:999px;
+    cursor:pointer;
+    transition:.2s;
+}
+.shop-item .buy-btn:hover{
+    background:#0cf;
+}
+
+/* Gift animation */
+.gift-fly{
+    position:absolute;
+    font-size:32px;
+    animation:flyUp 2s ease forwards;
+    pointer-events:none;
+}
+@keyframes flyUp{
+    0%{opacity:1; transform:translateY(0);}
+    100%{opacity:0; transform:translateY(-120px);}
+}
+
+/* Footer */
+.footer{
+    margin-top:50px;
+    font-size:12px;
+    opacity:.6;
+    text-align:center;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Hola Live Дэлгүүр</h1>
+    <div class="tagline">Токен зарж бэлэг, VIP авах боломжтой</div>
+
+    <div class="wallet">Wallet: 💎 <span id="walletTokens">0</span></div>
+
+    <div class="shop-grid">
+        <div class="shop-item" data-token="50">
+            <img src="../assets/img/icons/gift1.png" alt="Gift 1">
+            <div>💝 Бэлэг 1</div>
+            <div class="price">50 💎</div>
+            <button class="buy-btn">Худалдан авах</button>
+        </div>
+        <div class="shop-item" data-token="100">
+            <img src="../assets/img/icons/gift2.png" alt="Gift 2">
+            <div>💝 Бэлэг 2</div>
+            <div class="price">100 💎</div>
+            <button class="buy-btn">Худалдан авах</button>
+        </div>
+        <div class="shop-item" data-token="250">
+            <img src="../assets/img/icons/vip.png" alt="VIP">
+            <div>👑 VIP эрх</div>
+            <div class="price">250 💎</div>
+            <button class="buy-btn">Худалдан авах</button>
+        </div>
+    </div>
+</div>
+
+<footer class="footer">
+© 2026 Hola Live. Бүх эрх хуулиар хамгаалагдсан.
+</footer>
+
+<!-- ========================= -->
+<!-- SCRIPTS -->
+<!-- ========================= -->
+<script src="../assets/js/core/state.js"></script>
+<script src="../assets/js/core/storage.js"></script>
+<script src="../assets/js/economy/token.js"></script>
+<script src="../assets/js/economy/gift.js"></script>
+<script src="../assets/js/uiEnhance.js"></script>
+
+<script>
+// ==== INIT WALLET UI ====
+document.addEventListener("DOMContentLoaded",()=>{
+    document.getElementById("walletTokens").innerText = Economy.getWallet();
+});
+
+// ==== BUY HANDLER ====
+document.querySelectorAll(".buy-btn").forEach(btn=>{
+    btn.addEventListener("click", e=>{
+        const item = e.target.closest(".shop-item");
+        const cost = parseInt(item.getAttribute("data-token"));
+
+        if(Economy.spendTokens(cost)){
+            // Gift fly animation
+            const fly = document.createElement("div");
+            fly.className="gift-fly";
+            fly.innerText="🎁";
+            const rect = item.getBoundingClientRect();
+            fly.style.left = rect.left + rect.width/2 + "px";
+            fly.style.top = rect.top + "px";
+            document.body.appendChild(fly);
+            setTimeout(()=>fly.remove(),2000);
+
+            Economy.addToLedger(cost, item.querySelector("div").innerText);
+            alert(`🎉 Худалдан авалт амжилттай! ${cost} 💎 зарлаа`);
+        } else {
+            alert("Таны wallet-д токен хүрэлцэхгүй байна!");
+        }
+
+        document.getElementById("walletTokens").innerText = Economy.getWallet();
+    });
+});
+</script>
+
+</body>
+</html>
