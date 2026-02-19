@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Hola Store</title>
+<link rel="stylesheet" href="assets/css/platform.css">
+</head>
+<body class="platform-page">
+
+<h2>💎 Token Store</h2>
+
+<div class="card">
+    Wallet: 💎 <span id="walletTokens">0</span>
+</div>
+
+<div class="card">
+    <button onclick="Economy.addTokens(200)">Buy 200 Tokens</button>
+</div>
+
+<div class="card">
+    <button onclick="shareReferral()">Share Referral Link</button>
+    <p>Your Code: <b id="myRef"></b></p>
+</div>
+
+<script src="assets/js/economyEngine.js"></script>
+<script src="assets/js/growthEngine.js"></script>
+
+<script>
+document.getElementById("myRef").innerText = getMyRefCode();
+</script>
+
+</body>
+</html>
