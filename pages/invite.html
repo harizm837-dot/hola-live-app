@@ -1,38 +1,162 @@
-<h2>Урилга</h2>
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hola Live - Урилга</title>
 
-<p>Таны код:</p>
-<p id="refCode"></p>
+<link rel="stylesheet" href="../assets/css/reset.css">
+<link rel="stylesheet" href="../assets/css/variables.css">
+<link rel="stylesheet" href="../assets/css/layout.css">
+<link rel="stylesheet" href="../assets/css/components.css">
+<link rel="stylesheet" href="../assets/css/animations.css">
 
-<canvas id="qrCanvas"></canvas>
+<style>
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:#000;
+    color:#fff;
+    overflow-x:hidden;
+}
 
-<button onclick="copyCode()">Хуулбарлах</button>
+.container{
+    max-width:600px;
+    margin:0 auto;
+    padding:20px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:20px;
+}
+
+h1{
+    font-size:2rem;
+    text-align:center;
+    letter-spacing:.1em;
+}
+
+.tagline{
+    font-size:1rem;
+    opacity:.7;
+    text-align:center;
+}
+
+.qr-box{
+    margin-top:20px;
+    padding:10px;
+    background:#111;
+    border-radius:12px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:12px;
+}
+
+.qr-img{
+    width:180px;
+    height:180px;
+}
+
+.invite-btns{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    justify-content:center;
+}
+
+.invite-btn{
+    padding:10px 18px;
+    background:rgba(0,255,255,.2);
+    border:none;
+    border-radius:999px;
+    cursor:pointer;
+    color:#fff;
+    font-size:14px;
+    transition:.3s;
+}
+.invite-btn:hover{
+    background:#00eaff;
+    color:#000;
+}
+
+/* Footer */
+.invite-footer{
+    margin-top:50px;
+    font-size:12px;
+    opacity:.6;
+    text-align:center;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Hola Live-д урьж байна!</h1>
+    <div class="tagline">Найзаа урьж токен авах • QR / Share</div>
+
+    <div class="qr-box">
+        <canvas id="qrCanvas" class="qr-img"></canvas>
+        <span>QR кодыг скан хийнэ үү</span>
+    </div>
+
+    <div class="invite-btns">
+        <button class="invite-btn" id="copyLink">📋 Хуулбарлах</button>
+        <button class="invite-btn" id="tgInvite">✈️ Telegram</button>
+        <button class="invite-btn" id="msInvite">💬 Messenger</button>
+    </div>
+</div>
+
+<footer class="invite-footer">
+© 2026 Hola Live. Бүх эрх хуулиар хамгаалагдсан.
+</footer>
+
+<!-- ========================= -->
+<!-- SCRIPTS -->
+<!-- ========================= -->
+<script src="../assets/js/core/storage.js"></script>
+<script src="../assets/js/core/state.js"></script>
+<script src="../assets/js/economy/referral.js"></script>
+<script src="../assets/js/uiEnhance.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 
 <script>
-const code = ReferralEngine.generate();
-document.getElementById("refCode").innerText = code;
+// ==== QR GENERATOR ====
+const qrCanvas = document.getElementById('qrCanvas');
+const inviteLink = window.location.origin + "/?ref=" + (localStorage.getItem("userID") || "guest");
 
-function copyCode(){
-  navigator.clipboard.writeText(code);
-  Notify.toast("Код хуулбарлагдлаа");
-}
+QRCode.toCanvas(qrCanvas, inviteLink, {width:180}, function(error){
+    if(error) console.error(error);
+});
 
-function generateQR(text){
-  const canvas = document.getElementById("qrCanvas");
-  const ctx = canvas.getContext("2d");
-  canvas.width=200;
-  canvas.height=200;
-  ctx.fillStyle="#000";
-  ctx.fillRect(0,0,200,200);
-  ctx.fillStyle="#00eaff";
-  for(let i=0;i<100;i++){
-    ctx.fillRect(
-      Math.random()*200,
-      Math.random()*200,
-      5,
-      5
-    );
-  }
-}
+// ==== COPY LINK ====
+document.getElementById("copyLink").addEventListener("click", ()=>{
+    navigator.clipboard.writeText(inviteLink).then(()=>{
+        alert("Урилгын холбоос хуулагдлаа!");
+    });
+});
 
-generateQR(code);
+// ==== TELEGRAM / MESSENGER SHARE ====
+document.getElementById("tgInvite").addEventListener("click", ()=>{
+    const tgUrl = `https://t.me/share/url?url=${encodeURIComponent(inviteLink)}&text=Hola Live-д нэгдээрэй!`;
+    window.open(tgUrl,"_blank");
+});
+document.getElementById("msInvite").addEventListener("click", ()=>{
+    const msUrl = `https://www.messenger.com/t/?link=${encodeURIComponent(inviteLink)}`;
+    window.open(msUrl,"_blank");
+});
+
+// ==== Referral Token System ====
+document.addEventListener("DOMContentLoaded",()=>{
+    const refKey = new URLSearchParams(window.location.search).get("ref");
+    if(refKey && refKey!==localStorage.getItem("userID")){
+        const bonus = 50;
+        Economy.addTokens(bonus);
+        alert(`🎉 Урилгаар нэгдсэн тул ${bonus} токен авлаа!`);
+        localStorage.setItem("userID", refKey);
+    }
+});
 </script>
+
+</body>
+</html>
