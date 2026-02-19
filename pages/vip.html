@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hola Live - VIP Room</title>
+
+<link rel="stylesheet" href="../assets/css/reset.css">
+<link rel="stylesheet" href="../assets/css/variables.css">
+<link rel="stylesheet" href="../assets/css/layout.css">
+<link rel="stylesheet" href="../assets/css/components.css">
+<link rel="stylesheet" href="../assets/css/animations.css">
+
+<style>
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:#0a0a0a;
+    color:#fff;
+    overflow:hidden;
+}
+
+.container{
+    max-width:720px;
+    margin:0 auto;
+    padding:20px;
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+    text-align:center;
+}
+
+h1{
+    font-size:2rem;
+    letter-spacing:.1em;
+    margin-bottom:0.5rem;
+}
+
+.tagline{
+    font-size:1rem;
+    opacity:.7;
+    margin-bottom:20px;
+}
+
+.wallet{
+    text-align:right;
+    font-size:14px;
+    margin-bottom:10px;
+}
+
+.vip-badge{
+    display:inline-block;
+    font-size:16px;
+    color:gold;
+    margin-bottom:10px;
+    animation:glowPulse 2s infinite;
+}
+
+@keyframes glowPulse{
+    0%,100%{text-shadow:0 0 5px gold;}
+    50%{text-shadow:0 0 15px gold;}
+}
+
+.vip-content{
+    background:linear-gradient(180deg,#111,#222);
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 0 20px #00eaff55;
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+    align-items:center;
+    min-height:300px;
+    position:relative;
+    overflow:hidden;
+}
+
+.vip-particle{
+    position:absolute;
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:#0ff;
+    opacity:.7;
+    animation:vipParticle 5s linear infinite;
+}
+
+@keyframes vipParticle{
+    0%{transform:translateY(0) scale(0.5);}
+    50%{transform:translateY(-200px) scale(1);}
+    100%{transform:translateY(0) scale(0.5);}
+}
+
+.vip-btn{
+    margin-top:12px;
+    padding:8px 20px;
+    border-radius:999px;
+    border:none;
+    background:#00eaff;
+    color:#000;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.3s;
+}
+.vip-btn:hover{
+    background:#0cf;
+    box-shadow:0 0 20px #00eaff55;
+}
+
+/* Footer */
+.footer{
+    margin-top:50px;
+    font-size:12px;
+    opacity:.6;
+    text-align:center;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1>VIP ROOM</h1>
+    <div class="tagline">Exclusive Access • Special Gifts • Streamer Interaction</div>
+
+    <div class="wallet">Wallet: 💎 <span id="walletTokens">0</span></div>
+
+    <div class="vip-badge" id="vipBadge">👑 VIP</div>
+
+    <div class="vip-content" id="vipContent">
+        <p>VIP-д зөвхөн токен төлсөн хэрэглэгч орж болно!</p>
+        <button class="vip-btn" id="enterVIP">Орж орох</button>
+    </div>
+</div>
+
+<footer class="footer">
+© 2026 Hola Live. Бүх эрх хуулиар хамгаалагдсан.
+</footer>
+
+<!-- ========================= -->
+<!-- SCRIPTS -->
+<!-- ========================= -->
+<script src="../assets/js/core/state.js"></script>
+<script src="../assets/js/core/storage.js"></script>
+<script src="../assets/js/economy/token.js"></script>
+<script src="../assets/js/economy/vip.js"></script>
+<script src="../assets/js/uiEnhance.js"></script>
+
+<script>
+// ==== INIT WALLET ====
+document.addEventListener("DOMContentLoaded",()=>{
+    document.getElementById("walletTokens").innerText = Economy.getWallet();
+});
+
+// ==== VIP ACCESS HANDLER ====
+document.getElementById("enterVIP").addEventListener("click",()=>{
+    const cost = 250;
+
+    if(Economy.spendTokens(cost)){
+        VIP.activateVIP();
+        document.getElementById("vipBadge").innerText="👑 VIP ACTIVE";
+        alert("🎉 Амжилттай VIP боллоо!");
+    } else {
+        alert("💎 Таны wallet-д токен хүрэлцэхгүй байна!");
+    }
+
+    document.getElementById("walletTokens").innerText = Economy.getWallet();
+});
+
+// ==== VIP PARTICLES ====
+function createParticles(count=30){
+    const container = document.getElementById("vipContent");
+    for(let i=0;i<count;i++){
+        const p = document.createElement("div");
+        p.className="vip-particle";
+        p.style.left = Math.random()*90+"%";
+        p.style.top = Math.random()*90+"%";
+        container.appendChild(p);
+
+        setTimeout(()=>p.remove(),5000);
+    }
+}
+
+// Animate particles every 1.5s
+setInterval(()=>{createParticles(15);},1500);
+
+</script>
+
+</body>
+</html>
