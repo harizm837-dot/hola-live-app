@@ -3,159 +3,136 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hola Live - Урилга</title>
+<title>Hola Live · Invite</title>
 
-<link rel="stylesheet" href="../assets/css/reset.css">
-<link rel="stylesheet" href="../assets/css/variables.css">
-<link rel="stylesheet" href="../assets/css/layout.css">
-<link rel="stylesheet" href="../assets/css/components.css">
-<link rel="stylesheet" href="../assets/css/animations.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
 
 <style>
-body{
-    margin:0;
-    font-family:Arial, sans-serif;
-    background:#000;
-    color:#fff;
-    overflow-x:hidden;
+:root{
+  --bg:#0b0f1a;
+  --panel:#12182b;
+  --glass:rgba(255,255,255,0.08);
+  --border:rgba(255,255,255,0.15);
+  --text:#eaf6ff;
+  --muted:#9bb0c9;
+  --accent:#7df9ff;
+  --ok:#4dff88;
 }
 
-.container{
-    max-width:600px;
-    margin:0 auto;
-    padding:20px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:20px;
-}
+body{margin:0;font-family:'Inter',sans-serif;background:radial-gradient(circle at top,#141b33,#05070f 65%);color:var(--text);min-height:100vh;}
+.app{display:grid;grid-template-columns:260px 1fr;min-height:100vh;}
 
-h1{
-    font-size:2rem;
-    text-align:center;
-    letter-spacing:.1em;
-}
+.sidebar{background:linear-gradient(180deg,#0d1224,#070a14);padding:20px;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:20px;}
+.brand{font-family:'Montserrat',sans-serif;font-size:22px;font-weight:800;background:linear-gradient(90deg,var(--accent),#ff4fd8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.menu button{width:100%;padding:14px 16px;margin-bottom:10px;border-radius:16px;background:var(--glass);border:1px solid var(--border);color:var(--text);text-align:left;cursor:pointer;font-weight:600;transition:.25s;}
+.menu button:hover{transform:translateX(6px);}
 
-.tagline{
-    font-size:1rem;
-    opacity:.7;
-    text-align:center;
-}
+.main{display:flex;flex-direction:column;}
+.header{height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid var(--border);}
+.status{display:flex;gap:10px;align-items:center;font-size:14px;}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok);}
 
-.qr-box{
-    margin-top:20px;
-    padding:10px;
-    background:#111;
-    border-radius:12px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:12px;
-}
+.content{flex:1;padding:20px;display:grid;grid-template-columns:1fr;gap:20px;}
 
-.qr-img{
-    width:180px;
-    height:180px;
-}
+/* ================= INVITE PANEL ================= */
+.invite-panel{background:var(--panel);border-radius:24px;padding:20px;border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;text-align:center;gap:20px;transition:.3s;}
+.invite-panel:hover{box-shadow:0 0 20px var(--accent);transform:scale(1.03);}
+.invite-panel h3{margin-bottom:10px;font-weight:600;}
+.invite-panel input{width:80%;padding:10px;border-radius:12px;border:1px solid var(--border);background:var(--glass);color:#fff;text-align:center;outline:none;}
+.invite-panel button{padding:8px 16px;border:none;border-radius:12px;background:var(--accent);color:#000;font-weight:600;cursor:pointer;transition:.25s;}
+.invite-panel button:hover{background:#00eaff;box-shadow:0 0 15px #00eaff;}
 
-.invite-btns{
-    display:flex;
-    gap:12px;
-    flex-wrap:wrap;
-    justify-content:center;
-}
+/* QR CODE AREA */
+#qrcode{margin-top:12px;}
 
-.invite-btn{
-    padding:10px 18px;
-    background:rgba(0,255,255,.2);
-    border:none;
-    border-radius:999px;
-    cursor:pointer;
-    color:#fff;
-    font-size:14px;
-    transition:.3s;
-}
-.invite-btn:hover{
-    background:#00eaff;
-    color:#000;
-}
-
-/* Footer */
-.invite-footer{
-    margin-top:50px;
-    font-size:12px;
-    opacity:.6;
-    text-align:center;
-}
+/* FOOTER */
+.footer{height:44px;text-align:center;font-size:12px;color:var(--muted);display:flex;align-items:center;justify-content:center;margin-top:10px;}
 </style>
 </head>
+
 <body>
+<div class="app">
 
-<div class="container">
-    <h1>Hola Live-д урьж байна!</h1>
-    <div class="tagline">Найзаа урьж токен авах • QR / Share</div>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">HOLA LIVE</div>
+    <div class="menu">
+      <button data-link="index.html">🏠 Нүүр</button>
+      <button data-link="live.html">🎥 Live</button>
+      <button data-link="store.html">🛒 Store</button>
+    </div>
+  </aside>
 
-    <div class="qr-box">
-        <canvas id="qrCanvas" class="qr-img"></canvas>
-        <span>QR кодыг скан хийнэ үү</span>
+  <!-- MAIN PANEL -->
+  <div class="main">
+    <div class="header">
+      <div>💌 Урих / Referral</div>
+      <div class="status"><div class="dot"></div> LIVE</div>
     </div>
 
-    <div class="invite-btns">
-        <button class="invite-btn" id="copyLink">📋 Хуулбарлах</button>
-        <button class="invite-btn" id="tgInvite">✈️ Telegram</button>
-        <button class="invite-btn" id="msInvite">💬 Messenger</button>
+    <div class="content">
+
+      <div class="invite-panel">
+        <h3>Invite a Friend</h3>
+        <input type="text" id="inviteLink" readonly value="https://hola.live/?ref=USER123">
+        <button id="copyBtn">Copy Link</button>
+        <button id="telegramBtn">Share via Telegram</button>
+        <button id="messengerBtn">Share via Messenger</button>
+        <div id="qrcode"></div>
+      </div>
+
     </div>
+
+    <div class="footer">
+      © 2026 Hola Live. Бүх эрх хуулиар хамгаалагдсан.
+    </div>
+  </div>
+
 </div>
 
-<footer class="invite-footer">
-© 2026 Hola Live. Бүх эрх хуулиар хамгаалагдсан.
-</footer>
-
-<!-- ========================= -->
-<!-- SCRIPTS -->
-<!-- ========================= -->
-<script src="../assets/js/core/storage.js"></script>
-<script src="../assets/js/core/state.js"></script>
-<script src="../assets/js/economy/referral.js"></script>
-<script src="../assets/js/uiEnhance.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 
 <script>
-// ==== QR GENERATOR ====
-const qrCanvas = document.getElementById('qrCanvas');
-const inviteLink = window.location.origin + "/?ref=" + (localStorage.getItem("userID") || "guest");
+(() => {
+const inviteInput = document.getElementById('inviteLink');
+const copyBtn = document.getElementById('copyBtn');
+const telegramBtn = document.getElementById('telegramBtn');
+const messengerBtn = document.getElementById('messengerBtn');
+const qrContainer = document.getElementById('qrcode');
 
-QRCode.toCanvas(qrCanvas, inviteLink, {width:180}, function(error){
-    if(error) console.error(error);
-});
-
-// ==== COPY LINK ====
-document.getElementById("copyLink").addEventListener("click", ()=>{
-    navigator.clipboard.writeText(inviteLink).then(()=>{
-        alert("Урилгын холбоос хуулагдлаа!");
-    });
+// Generate QR code
+QRCode.toCanvas(qrContainer, inviteInput.value, {width:180}, function (error) {
+  if(error) console.error(error);
 });
 
-// ==== TELEGRAM / MESSENGER SHARE ====
-document.getElementById("tgInvite").addEventListener("click", ()=>{
-    const tgUrl = `https://t.me/share/url?url=${encodeURIComponent(inviteLink)}&text=Hola Live-д нэгдээрэй!`;
-    window.open(tgUrl,"_blank");
-});
-document.getElementById("msInvite").addEventListener("click", ()=>{
-    const msUrl = `https://www.messenger.com/t/?link=${encodeURIComponent(inviteLink)}`;
-    window.open(msUrl,"_blank");
+// Copy link
+copyBtn.addEventListener('click',()=>{
+  inviteInput.select();
+  inviteInput.setSelectionRange(0,99999);
+  document.execCommand('copy');
+  alert("Link copied!");
 });
 
-// ==== Referral Token System ====
-document.addEventListener("DOMContentLoaded",()=>{
-    const refKey = new URLSearchParams(window.location.search).get("ref");
-    if(refKey && refKey!==localStorage.getItem("userID")){
-        const bonus = 50;
-        Economy.addTokens(bonus);
-        alert(`🎉 Урилгаар нэгдсэн тул ${bonus} токен авлаа!`);
-        localStorage.setItem("userID", refKey);
-    }
+// Telegram share
+telegramBtn.addEventListener('click',()=>{
+  const url = encodeURIComponent(inviteInput.value);
+  window.open(`https://t.me/share/url?url=${url}`, "_blank");
 });
+
+// Messenger share
+messengerBtn.addEventListener('click',()=>{
+  const url = encodeURIComponent(inviteInput.value);
+  window.open(`https://www.messenger.com/t/?link=${url}`, "_blank");
+});
+
+// Navigation safe
+document.querySelectorAll('[data-link]').forEach(btn=>{
+  btn.addEventListener('click',()=>{const page=btn.dataset.link;if(page)window.location.href=page;});
+});
+
+})();
 </script>
 
 </body>
