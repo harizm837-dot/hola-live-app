@@ -1,4 +1,4 @@
-const CACHE_NAME = "hola-live-v2";
+const CACHE_NAME = "hola-live-v3";
 
 const urlsToCache = [
   "/",
