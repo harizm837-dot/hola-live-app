@@ -9,22 +9,29 @@
 <link rel="stylesheet" href="assets/css/platform.css">
 
 <style>
-body {
+body{
     margin:0;
-    background:black;
+    background:#000;
     color:white;
     font-family:Arial;
     overflow:hidden;
+    transition:opacity 0.3s ease;
 }
 
-.video-area {
+.video-area{
     height:100vh;
-    background: linear-gradient(180deg,#111,#000);
+    background:linear-gradient(180deg,#111,#000);
     position:relative;
 }
 
-/* Role Panel */
-.role-panel {
+.wallet-box{
+    position:absolute;
+    top:10px;
+    right:120px;
+    font-size:14px;
+}
+
+.role-panel{
     position:fixed;
     top:10px;
     right:10px;
@@ -35,8 +42,7 @@ body {
     z-index:1000;
 }
 
-/* Streamer Controls */
-.streamer-controls {
+.streamer-controls{
     position:fixed;
     bottom:90px;
     right:10px;
@@ -47,12 +53,12 @@ body {
     z-index:1000;
 }
 
-/* Wallet */
-.wallet-box {
+.vip-badge{
     position:absolute;
-    top:10px;
+    top:50px;
     right:120px;
     font-size:14px;
+    color:gold;
 }
 </style>
 </head>
@@ -60,7 +66,7 @@ body {
 
 <div class="video-area">
 
-    <!-- LIVE TOP BAR -->
+    <!-- TOP BAR -->
     <div class="live-top-bar">
         <div class="live-badge">LIVE</div>
         <div>👁 <span id="viewerCount">0</span></div>
@@ -73,6 +79,9 @@ body {
         Wallet: 💎 <span id="walletTokens">0</span>
     </div>
 
+    <!-- VIP BADGE -->
+    <div class="vip-badge" id="vipBadge"></div>
+
 </div>
 
 <!-- BOTTOM CONTROLS -->
@@ -82,6 +91,9 @@ body {
     <div class="live-btn" onclick="sendReaction()">❤️</div>
     <div class="live-btn" onclick="window.location.href='leaderboard.html'">🏆</div>
     <div class="live-btn" onclick="window.location.href='store.html'">🛒</div>
+    <div class="live-btn" onclick="window.location.href='analytics.html'">📊</div>
+    <div class="live-btn" onclick="VIP.activateVIP()">👑</div>
+    <div class="live-btn" onclick="openModPanel()">🛡</div>
 </div>
 
 <!-- STREAMER PANEL -->
@@ -89,7 +101,7 @@ body {
     <button onclick="stopLive()">⛔ Stop Live</button>
 </div>
 
-<!-- ROLE DEV PANEL -->
+<!-- DEV ROLE PANEL -->
 <div class="role-panel">
     Role: <span id="currentRole"></span><br><br>
     <button onclick="RoleEngine.setRole('viewer')">Viewer</button>
@@ -97,7 +109,10 @@ body {
     <button onclick="RoleEngine.setRole('moderator')">Mod</button>
 </div>
 
+<!-- ========================= -->
 <!-- SCRIPTS -->
+<!-- ========================= -->
+
 <script src="assets/js/eventBus.js"></script>
 <script src="assets/js/roleEngine.js"></script>
 <script src="assets/js/guard.js"></script>
@@ -105,11 +120,16 @@ body {
 <script src="assets/js/realtimeEngine.js"></script>
 <script src="assets/js/economyEngine.js"></script>
 <script src="assets/js/leaderboard.js"></script>
+<script src="assets/js/growthEngine.js"></script>
+<script src="assets/js/vipEngine.js"></script>
+<script src="assets/js/analyticsEngine.js"></script>
+<script src="assets/js/moderatorPanel.js"></script>
+<script src="assets/js/uiEnhance.js"></script>
 
 <script>
 
 // ===============================
-// PERMISSION GUARD
+// ROLE GUARD
 // ===============================
 
 requireRole([
@@ -119,14 +139,23 @@ requireRole([
 ]);
 
 // ===============================
-// INIT ROLE UI
+// INIT UI
 // ===============================
 
-document.getElementById("currentRole").innerText = RoleEngine.getRole();
+document.addEventListener("DOMContentLoaded",()=>{
 
-if(RoleEngine.is(RoleEngine.ROLES.STREAMER)){
-    document.getElementById("streamerPanel").style.display = "block";
-}
+    document.getElementById("currentRole").innerText = RoleEngine.getRole();
+
+    if(RoleEngine.is(RoleEngine.ROLES.STREAMER)){
+        document.getElementById("streamerPanel").style.display="block";
+    }
+
+    Economy.updateWalletUI();
+
+    if(VIP.isVIP()){
+        document.getElementById("vipBadge").innerText="👑 VIP ACTIVE";
+    }
+});
 
 // ===============================
 // STREAMER CONTROL
@@ -138,7 +167,7 @@ function stopLive(){
         return;
     }
     alert("Live Ended 🔴");
-    window.location.href = "index.html";
+    window.location.href="index.html";
 }
 
 // ===============================
@@ -150,16 +179,17 @@ function sendChat(){
 }
 
 // ===============================
-// GIFT SYSTEM (PHASE 7 CONNECTED)
+// GIFT SYSTEM
 // ===============================
 
 function sendGift(){
 
-    const giftCost = 20;
+    const cost = 20;
 
-    if(Economy.spendTokens(giftCost)){
-        LiveEvent.emit("gift_received", giftCost);
-        updateLeaderboard("You", giftCost);
+    if(Economy.spendTokens(cost)){
+        LiveEvent.emit("gift_received", cost);
+        updateLeaderboard("You", cost);
+        Analytics.recordGift(cost);
     }
 }
 
@@ -168,32 +198,24 @@ function sendGift(){
 // ===============================
 
 function sendReaction(){
-    const heart = document.createElement("div");
-    heart.className = "reaction-float";
-    heart.innerText = "❤️";
-    heart.style.left = Math.random()*90 + "%";
+    const heart=document.createElement("div");
+    heart.className="reaction-float";
+    heart.innerText="❤️";
+    heart.style.left=Math.random()*90+"%";
     document.body.appendChild(heart);
     setTimeout(()=>heart.remove(),3000);
 }
 
 // ===============================
-// AUTO UPDATE WALLET
-// ===============================
-
-document.addEventListener("DOMContentLoaded", ()=>{
-    Economy.updateWalletUI();
-});
-
-// ===============================
-// GIFT LISTENER (VISUAL EFFECT)
+// VISUAL GIFT POP
 // ===============================
 
 LiveEvent.on("gift_received",(value)=>{
-    const gift = document.createElement("div");
-    gift.className = "combo-pop";
-    gift.innerText = "🎁 +" + value;
-    document.body.appendChild(gift);
-    setTimeout(()=>gift.remove(),2000);
+    const el=document.createElement("div");
+    el.className="combo-pop";
+    el.innerText="🎁 +"+value;
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),2000);
 });
 
 </script>
