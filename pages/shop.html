@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hola Live - Дэлгүүр</title>
+<title>Hola Live - Shop</title>
 
 <link rel="stylesheet" href="../assets/css/reset.css">
 <link rel="stylesheet" href="../assets/css/variables.css">
@@ -15,96 +15,81 @@
 body{
     margin:0;
     font-family:Arial, sans-serif;
-    background:#000;
+    background:#0a0a0a;
     color:#fff;
     overflow-x:hidden;
 }
 
 .container{
-    max-width:700px;
+    max-width:720px;
     margin:0 auto;
     padding:20px;
     display:flex;
     flex-direction:column;
     gap:20px;
+    text-align:center;
 }
 
 h1{
     font-size:2rem;
-    text-align:center;
     letter-spacing:.1em;
-}
-
-.tagline{
-    font-size:1rem;
-    opacity:.7;
-    text-align:center;
+    margin-bottom:0.5rem;
 }
 
 .wallet{
-    text-align:right;
     font-size:14px;
-    margin-bottom:10px;
+    text-align:right;
 }
 
-.shop-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
-    gap:16px;
-}
-
-.shop-item{
-    background:#111;
+.item-card{
+    background:linear-gradient(180deg,#111,#222);
+    padding:15px;
     border-radius:12px;
-    padding:12px;
+    box-shadow:0 0 20px #00eaff55;
+    margin-bottom:15px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    transition:transform .3s, box-shadow .3s;
+    cursor:pointer;
+}
+
+.item-card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 0 30px #00eaff77;
+}
+
+.item-info{
     display:flex;
     flex-direction:column;
-    align-items:center;
-    cursor:pointer;
-    transition:.3s;
-    position:relative;
+    gap:5px;
+    text-align:left;
 }
 
-.shop-item:hover{
-    transform:scale(1.05);
-    box-shadow:0 0 15px #00eaff;
+.item-title{
+    font-size:1rem;
+    font-weight:600;
 }
 
-.shop-item img{
-    width:80px;
-    height:80px;
-    margin-bottom:8px;
+.item-price{
+    font-size:.9rem;
+    color:#0cf;
 }
 
-.shop-item .price{
-    font-size:14px;
-    color:#0ff;
-}
-
-.shop-item .buy-btn{
-    margin-top:6px;
+.buy-btn{
     padding:6px 14px;
+    border-radius:999px;
+    border:none;
     background:#00eaff;
     color:#000;
-    border:none;
-    border-radius:999px;
     cursor:pointer;
-    transition:.2s;
-}
-.shop-item .buy-btn:hover{
-    background:#0cf;
+    font-size:.85rem;
+    transition:.3s;
 }
 
-/* Gift animation */
-.gift-fly{
-    position:absolute;
-    font-size:32px;
-    animation:flyUp 2s ease forwards;
-    pointer-events:none;
-}
-@keyframes flyUp{
-    0%{opacity:1; transform:translateY(0);}
-    100%{opacity:0; transform:translateY(-120px);}
+.buy-btn:hover{
+    background:#0ff;
+    box-shadow:0 0 15px #00eaff55;
 }
 
 /* Footer */
@@ -119,77 +104,103 @@ h1{
 <body>
 
 <div class="container">
-    <h1>Hola Live Дэлгүүр</h1>
-    <div class="tagline">Токен зарж бэлэг, VIP авах боломжтой</div>
+
+    <h1>Hola Live - Дэлгүүр</h1>
 
     <div class="wallet">Wallet: 💎 <span id="walletTokens">0</span></div>
 
-    <div class="shop-grid">
-        <div class="shop-item" data-token="50">
-            <img src="../assets/img/icons/gift1.png" alt="Gift 1">
-            <div>💝 Бэлэг 1</div>
-            <div class="price">50 💎</div>
-            <button class="buy-btn">Худалдан авах</button>
-        </div>
-        <div class="shop-item" data-token="100">
-            <img src="../assets/img/icons/gift2.png" alt="Gift 2">
-            <div>💝 Бэлэг 2</div>
-            <div class="price">100 💎</div>
-            <button class="buy-btn">Худалдан авах</button>
-        </div>
-        <div class="shop-item" data-token="250">
-            <img src="../assets/img/icons/vip.png" alt="VIP">
-            <div>👑 VIP эрх</div>
-            <div class="price">250 💎</div>
-            <button class="buy-btn">Худалдан авах</button>
-        </div>
+    <!-- GIFT ITEMS -->
+    <div id="shopItems">
+
+        <!-- Items will be injected by JS -->
+
     </div>
+
 </div>
 
 <footer class="footer">
 © 2026 Hola Live. Бүх эрх хуулиар хамгаалагдсан.
 </footer>
 
-<!-- ========================= -->
-<!-- SCRIPTS -->
-<!-- ========================= -->
 <script src="../assets/js/core/state.js"></script>
 <script src="../assets/js/core/storage.js"></script>
 <script src="../assets/js/economy/token.js"></script>
 <script src="../assets/js/economy/gift.js"></script>
-<script src="../assets/js/uiEnhance.js"></script>
+<script src="../assets/js/economy/vip.js"></script>
 
 <script>
-// ==== INIT WALLET UI ====
-document.addEventListener("DOMContentLoaded",()=>{
-    document.getElementById("walletTokens").innerText = Economy.getWallet();
-});
+// ==== SHOP ITEMS ====
+const shopCatalog=[
+    {id:1,title:"🎁 Бэлэг жижиг",price:10},
+    {id:2,title:"🎁 Бэлэг дунд",price:25},
+    {id:3,title:"🎁 Бэлэг том",price:50},
+    {id:4,title:"💎 Token Pack 100",price:100},
+    {id:5,title:"💎 Token Pack 500",price:450}, // VIP discount
+    {id:6,title:"💎 Token Pack 1000",price:850} // VIP discount
+];
 
-// ==== BUY HANDLER ====
-document.querySelectorAll(".buy-btn").forEach(btn=>{
-    btn.addEventListener("click", e=>{
-        const item = e.target.closest(".shop-item");
-        const cost = parseInt(item.getAttribute("data-token"));
+function renderShop(){
+    const container=document.getElementById("shopItems");
+    container.innerHTML="";
+    shopCatalog.forEach(item=>{
+        const card=document.createElement("div");
+        card.className="item-card";
 
-        if(Economy.spendTokens(cost)){
-            // Gift fly animation
-            const fly = document.createElement("div");
-            fly.className="gift-fly";
-            fly.innerText="🎁";
-            const rect = item.getBoundingClientRect();
-            fly.style.left = rect.left + rect.width/2 + "px";
-            fly.style.top = rect.top + "px";
-            document.body.appendChild(fly);
-            setTimeout(()=>fly.remove(),2000);
+        const info=document.createElement("div");
+        info.className="item-info";
 
-            Economy.addToLedger(cost, item.querySelector("div").innerText);
-            alert(`🎉 Худалдан авалт амжилттай! ${cost} 💎 зарлаа`);
+        const title=document.createElement("div");
+        title.className="item-title";
+        title.innerText=item.title;
+
+        const price=document.createElement("div");
+        price.className="item-price";
+
+        let finalPrice=item.price;
+        if(VIP.isVIP() && item.price>=450){
+            finalPrice = Math.floor(item.price*0.8);
+            price.innerText=`💎 ${finalPrice} (VIP -20%)`;
         } else {
-            alert("Таны wallet-д токен хүрэлцэхгүй байна!");
+            price.innerText=`💎 ${finalPrice}`;
         }
 
-        document.getElementById("walletTokens").innerText = Economy.getWallet();
+        info.appendChild(title);
+        info.appendChild(price);
+
+        const btn=document.createElement("button");
+        btn.className="buy-btn";
+        btn.innerText="Худалдан авах";
+        btn.addEventListener("click",()=>{
+            if(Economy.spendTokens(finalPrice)){
+                if(item.id>=1 && item.id<=3){
+                    Gift.send(finalPrice);
+                    alert(`🎁 ${item.title} илгээсэн!`);
+                } else {
+                    Economy.addTokens(item.price);
+                    alert(`💎 ${item.title} худалдаж авсан!`);
+                }
+                updateWalletUI();
+            } else {
+                alert("💎 Wallet-д токен хүрэлцэхгүй байна!");
+            }
+        });
+
+        card.appendChild(info);
+        card.appendChild(btn);
+
+        container.appendChild(card);
     });
+}
+
+// ==== WALLET UI UPDATE ====
+function updateWalletUI(){
+    document.getElementById("walletTokens").innerText = Economy.getWallet();
+}
+
+// ==== INIT ====
+document.addEventListener("DOMContentLoaded",()=>{
+    updateWalletUI();
+    renderShop();
 });
 </script>
 
