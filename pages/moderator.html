@@ -1,18 +1,377 @@
-<h2>Зохицуулагч</h2>
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Hola Live Moderator Dashboard">
+<title>Hola Live · Модератор</title>
 
-<input id="username" placeholder="Username">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
 
-<button onclick="mute()">Mute</button>
-<button onclick="ban()">Ban</button>
+<style>
+
+/* ================= ROOT VARIABLES ================= */
+:root{
+  --bg:#0b0f1a;
+  --panel:#12182b;
+  --glass:rgba(255,255,255,0.08);
+  --border:rgba(255,255,255,0.15);
+  --text:#eaf6ff;
+  --muted:#9bb0c9;
+  --accent:#7df9ff;
+  --danger:#ff3344;
+  --ok:#4dff88;
+}
+
+/* RESET */
+*,
+*::before,
+*::after{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:'Inter',sans-serif;
+  background:radial-gradient(circle at top,#141b33,#05070f 65%);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ================= APP LAYOUT ================= */
+.app{
+  display:grid;
+  grid-template-columns:260px 1fr;
+  min-height:100vh;
+}
+
+/* ================= SIDEBAR ================= */
+.sidebar{
+  background:linear-gradient(180deg,#0d1224,#070a14);
+  padding:20px;
+  border-right:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+}
+
+.brand{
+  font-family:'Montserrat',sans-serif;
+  font-size:22px;
+  font-weight:800;
+  background:linear-gradient(90deg,var(--accent),#ff4fd8);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.menu button{
+  width:100%;
+  padding:14px 16px;
+  margin-bottom:10px;
+  border-radius:16px;
+  background:var(--glass);
+  border:1px solid var(--border);
+  color:var(--text);
+  text-align:left;
+  cursor:pointer;
+  font-weight:600;
+  transition:.25s;
+}
+
+.menu button:hover{
+  transform:translateX(6px);
+  background:linear-gradient(90deg,#0d1224,#12182b);
+}
+
+/* ================= MAIN CONTENT ================= */
+.main{
+  display:flex;
+  flex-direction:column;
+}
+
+.header{
+  height:60px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 20px;
+  border-bottom:1px solid var(--border);
+}
+
+.status{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  font-size:14px;
+}
+
+.dot{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:var(--ok);
+  box-shadow:0 0 8px var(--ok);
+}
+
+/* ================= CONTENT GRID ================= */
+.content{
+  flex:1;
+  padding:20px;
+  display:grid;
+  grid-template-columns:1.3fr .7fr;
+  gap:20px;
+}
+
+/* ================= STREAM PANEL ================= */
+.stream-panel{
+  background:var(--panel);
+  border-radius:24px;
+  padding:20px;
+  border:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+}
+
+.stream-preview{
+  aspect-ratio:16/9;
+  border-radius:18px;
+  background:
+    linear-gradient(135deg,rgba(255,255,255,.1),transparent),
+    url('https://dummyimage.com/1280x720/101522/ffffff&text=LIVE+STREAM');
+  background-size:cover;
+  margin-bottom:16px;
+  position:relative;
+}
+
+.stream-preview::after{
+  content:"LIVE";
+  position:absolute;
+  top:12px;
+  left:12px;
+  background:var(--danger);
+  padding:4px 10px;
+  border-radius:10px;
+  font-size:12px;
+}
+
+.controls{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.ctrl{
+  padding:12px 14px;
+  border-radius:14px;
+  background:var(--glass);
+  border:1px solid var(--border);
+  cursor:pointer;
+  transition:.25s;
+}
+
+.ctrl:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 15px var(--accent33);
+}
+
+/* ================= CHAT PANEL ================= */
+.chat-panel{
+  background:var(--panel);
+  border-radius:24px;
+  border:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+
+.chat-header{
+  padding:14px;
+  border-bottom:1px solid var(--border);
+  font-weight:600;
+}
+
+.chat{
+  flex:1;
+  padding:14px;
+  overflow-y:auto;
+  font-size:13px;
+}
+
+.msg{
+  margin-bottom:8px;
+}
+
+.msg span{
+  color:var(--accent);
+  font-weight:600;
+}
+
+.chat-input{
+  display:flex;
+  border-top:1px solid var(--border);
+}
+
+.chat-input input{
+  flex:1;
+  background:transparent;
+  border:none;
+  padding:14px;
+  color:var(--text);
+  outline:none;
+}
+
+.chat-input button{
+  padding:0 18px;
+  background:var(--accent);
+  border:none;
+  cursor:pointer;
+  font-weight:600;
+  transition:.25s;
+}
+
+.chat-input button:hover{
+  transform:scale(1.05);
+}
+
+/* ================= FOOTER ================= */
+.footer{
+  height:44px;
+  text-align:center;
+  font-size:12px;
+  color:var(--muted);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-top:10px;
+}
+
+/* ================= RESPONSIVE ================= */
+@media(max-width:1000px){
+  .app{
+    grid-template-columns:1fr;
+  }
+  .sidebar{
+    display:none;
+  }
+  .content{
+    grid-template-columns:1fr;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">HOLA LIVE</div>
+    <div class="menu">
+      <button data-link="index.html">🏠 Нүүр</button>
+      <button data-link="lobby.html">📊 Статус</button>
+      <button data-link="live.html">🎥 Live</button>
+    </div>
+  </aside>
+
+  <!-- MAIN PANEL -->
+  <div class="main">
+    <div class="header">
+      <div>🛡 Модератор самбар</div>
+      <div class="status">
+        <div class="dot"></div>
+        LIVE
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- STREAM PANEL -->
+      <div class="stream-panel">
+        <div class="stream-preview" aria-label="Live stream preview"></div>
+        <div class="controls">
+          <button class="ctrl">⏸ Түр зогсоох</button>
+          <button class="ctrl">🔇 Mute</button>
+          <button class="ctrl">🚫 Kick</button>
+          <button class="ctrl">🔒 VIP</button>
+        </div>
+      </div>
+
+      <!-- CHAT PANEL -->
+      <div class="chat-panel">
+        <div class="chat-header">Чат хяналт</div>
+        <div class="chat" id="chat" role="log" aria-live="polite">
+          <div class="msg"><span>user01:</span> Сайн стрим 🔥</div>
+        </div>
+        <form class="chat-input" id="chatForm">
+          <input id="msgInput" placeholder="Модератор мессеж..." autocomplete="off" required>
+          <button type="submit">→</button>
+        </form>
+      </div>
+
+    </div>
+
+    <div class="footer">
+      © 2026 Hola Live. Бүх эрх хуулиар хамгаалагдсан.
+    </div>
+  </div>
+
+</div>
 
 <script>
-function mute(){
-  let name = document.getElementById("username").value;
-  ModeratorEngine.muteUser(name);
+(() => {
+
+/* ========= SAFE CHAT SEND ========= */
+const form = document.getElementById('chatForm');
+const input = document.getElementById('msgInput');
+const chat = document.getElementById('chat');
+
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  const text = input.value.trim();
+  if(!text) return;
+
+  const msg = document.createElement('div');
+  msg.className = 'msg';
+
+  const user = document.createElement('span');
+  user.textContent = 'MOD:';
+
+  msg.appendChild(user);
+  msg.append(' ' + text);
+
+  chat.appendChild(msg);
+  chat.scrollTop = chat.scrollHeight;
+
+  input.value = '';
+});
+
+/* ========= SAFE NAVIGATION ========= */
+document.querySelectorAll('[data-link]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const page = btn.dataset.link;
+    if(page) window.location.href = page;
+  });
+});
+
+/* ========= ROLE CHECK ========= */
+const RoleEngine = {
+    ROLES:{VIEWER:'viewer',STREAMER:'streamer',MODERATOR:'moderator'},
+    role:'moderator',
+    is(r){ return this.role===r; }
+};
+
+if(!RoleEngine.is(RoleEngine.ROLES.MODERATOR)){
+    alert("⚠️ Зөвхөн Moderator эрхтэй хэрэглэгч орж болно!");
+    window.location.href="index.html";
 }
 
-function ban(){
-  let name = document.getElementById("username").value;
-  ModeratorEngine.banUser(name);
-}
+})();
 </script>
+
+</body>
+</html>
