@@ -16,6 +16,24 @@ body {
     background: linear-gradient(180deg,#111,#000);
     position:relative;
 }
+.role-panel {
+    position:fixed;
+    top:10px;
+    right:10px;
+    background:#111;
+    padding:10px;
+    border-radius:10px;
+    font-size:12px;
+}
+.streamer-controls {
+    position:fixed;
+    bottom:80px;
+    right:10px;
+    background:#222;
+    padding:10px;
+    border-radius:10px;
+    display:none;
+}
 </style>
 </head>
 <body>
@@ -33,6 +51,7 @@ body {
 
 </div>
 
+<!-- Bottom Control -->
 <div class="live-bottom-bar">
     <div class="live-btn" onclick="sendChat()">💬</div>
     <div class="live-btn" onclick="sendGift()">🎁</div>
@@ -41,14 +60,62 @@ body {
     <div class="live-btn">🔗</div>
 </div>
 
+<!-- Streamer Controls -->
+<div class="streamer-controls" id="streamerPanel">
+    <button onclick="stopLive()">⛔ Stop Live</button>
+</div>
+
+<!-- Dev Role Switch Panel -->
+<div class="role-panel">
+    Role: <span id="currentRole"></span><br><br>
+    <button onclick="RoleEngine.setRole('viewer')">Viewer</button>
+    <button onclick="RoleEngine.setRole('streamer')">Streamer</button>
+    <button onclick="RoleEngine.setRole('moderator')">Mod</button>
+</div>
+
 <script src="assets/js/eventBus.js"></script>
+<script src="assets/js/roleEngine.js"></script>
+<script src="assets/js/guard.js"></script>
 <script src="assets/js/liveEngine.js"></script>
 
 <script>
+
+// Permission Guard
+requireRole([
+    RoleEngine.ROLES.VIEWER,
+    RoleEngine.ROLES.STREAMER,
+    RoleEngine.ROLES.MODERATOR
+]);
+
+// Show Current Role
+document.getElementById("currentRole").innerText = RoleEngine.getRole();
+
+// Streamer UI
+if(RoleEngine.is(RoleEngine.ROLES.STREAMER)){
+    document.getElementById("streamerPanel").style.display = "block";
+}
+
+// Stop Live (Streamer only)
+function stopLive(){
+    if(!RoleEngine.is(RoleEngine.ROLES.STREAMER)){
+        alert("Only Streamer can stop live");
+        return;
+    }
+    alert("Live Ended 🔴");
+    window.location.href = "index.html";
+}
+
+// Chat Simulation
+function sendChat(){
+    alert("Chat sent 💬");
+}
+
+// Gift
 function sendGift(){
     LiveEvent.emit("gift_received", 10);
 }
 
+// Reaction
 function sendReaction(){
     const heart = document.createElement("div");
     heart.className = "gift-float";
@@ -57,6 +124,7 @@ function sendReaction(){
     setTimeout(()=>heart.remove(),2000);
 }
 
+// Gift Listener
 LiveEvent.on("gift_received",(value)=>{
     const gift = document.createElement("div");
     gift.className = "gift-float";
@@ -64,6 +132,7 @@ LiveEvent.on("gift_received",(value)=>{
     document.body.appendChild(gift);
     setTimeout(()=>gift.remove(),2000);
 });
+
 </script>
 
 </body>
