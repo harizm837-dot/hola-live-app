@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hola Live · Analytics</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#0b0f1a;
+  --panel:#12182b;
+  --glass:rgba(255,255,255,0.08);
+  --border:rgba(255,255,255,0.15);
+  --text:#eaf6ff;
+  --muted:#9bb0c9;
+  --accent:#7df9ff;
+  --danger:#ff3344;
+  --ok:#4dff88;
+}
+
+body{margin:0;font-family:'Inter',sans-serif;background:radial-gradient(circle at top,#141b33,#05070f 65%);color:var(--text);min-height:100vh;}
+
+.app{display:grid;grid-template-columns:260px 1fr;min-height:100vh;}
+
+.sidebar{background:linear-gradient(180deg,#0d1224,#070a14);padding:20px;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:20px;}
+.brand{font-family:'Montserrat',sans-serif;font-size:22px;font-weight:800;background:linear-gradient(90deg,var(--accent),#ff4fd8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.menu button{width:100%;padding:14px 16px;margin-bottom:10px;border-radius:16px;background:var(--glass);border:1px solid var(--border);color:var(--text);text-align:left;cursor:pointer;font-weight:600;transition:.25s;}
+.menu button:hover{transform:translateX(6px);}
+
+.main{display:flex;flex-direction:column;}
+.header{height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid var(--border);}
+.status{display:flex;gap:10px;align-items:center;font-size:14px;}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok);}
+
+.content{flex:1;padding:20px;display:grid;grid-template-columns:1.2fr .8fr;gap:20px;}
+
+/* PANEL STYLES */
+.panel{background:var(--panel);border-radius:24px;padding:20px;border:1px solid var(--border);}
+.panel h3{margin-top:0;font-weight:600;font-size:16px;margin-bottom:12px;}
+.stat-box{background:var(--glass);padding:12px 16px;border-radius:14px;margin-bottom:10px;}
+.stat-box .label{font-size:11px;color:var(--muted);}
+.stat-box .value{font-weight:600;font-size:16px;margin-top:4px;display:block;}
+
+.chart{height:200px;border-radius:14px;background:linear-gradient(135deg,#1a2033,#101418);display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:18px;}
+
+/* FOOTER */
+.footer{height:44px;text-align:center;font-size:12px;color:var(--muted);display:flex;align-items:center;justify-content:center;margin-top:10px;}
+
+/* RESPONSIVE */
+@media(max-width:1000px){
+  .app{grid-template-columns:1fr;}
+  .sidebar{display:none;}
+  .content{grid-template-columns:1fr;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">HOLA LIVE</div>
+    <div class="menu">
+      <button data-link="index.html">🏠 Нүүр</button>
+      <button data-link="streamer.html">🎥 Streamer</button>
+      <button data-link="moderator.html">🛡 Модератор</button>
+    </div>
+  </aside>
+
+  <!-- MAIN PANEL -->
+  <div class="main">
+    <div class="header">
+      <div>📊 Analytics Dashboard</div>
+      <div class="status"><div class="dot"></div> LIVE</div>
+    </div>
+
+    <div class="content">
+
+      <!-- LEFT PANEL: Metrics -->
+      <div>
+        <div class="panel">
+          <h3>Realtime Stats</h3>
+          <div class="stat-box"><span class="label">Current Viewers</span><span class="value" id="viewerCount">0</span></div>
+          <div class="stat-box"><span class="label">Tokens Earned</span><span class="value" id="tokenCount">0</span></div>
+          <div class="stat-box"><span class="label">VIP Engagement</span><span class="value" id="vipCount">0</span></div>
+        </div>
+
+        <div class="panel">
+          <h3>Top Gifts</h3>
+          <div class="stat-box"><span class="label">🎁 Gift A</span><span class="value">120</span></div>
+          <div class="stat-box"><span class="label">🎁 Gift B</span><span class="value">85</span></div>
+          <div class="stat-box"><span class="label">🎁 Gift C</span><span class="value">42</span></div>
+        </div>
+
+        <div class="panel">
+          <h3>Realtime Chat</h3>
+          <div id="chatLog" style="height:200px;overflow-y:auto;padding:10px;background:var(--glass);border-radius:14px;color:var(--text);font-size:13px;">
+          </div>
+          <form id="chatForm" style="display:flex;margin-top:8px;">
+            <input id="msgInput" placeholder="Send message..." style="flex:1;padding:8px;border-radius:10px;border:none;background:#000;color:white;" required>
+            <button type="submit" style="padding:0 12px;border-radius:10px;background:var(--accent);border:none;color:#000;font-weight:600;margin-left:4px;">→</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL: Charts -->
+      <div>
+        <div class="panel">
+          <h3>Viewer Trend</h3>
+          <div class="chart" id="viewerChart">📈 Loading...</div>
+        </div>
+
+        <div class="panel">
+          <h3>Token Flow</h3>
+          <div class="chart" id="tokenChart">💎 Loading...</div>
+        </div>
+
+        <div class="panel">
+          <h3>VIP Engagement</h3>
+          <div class="chart" id="vipChart">👑 Loading...</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="footer">
+      © 2026 Hola Live. Бүх эрх хуулиар хамгаалагдсан.
+    </div>
+  </div>
+
+</div>
+
+<script>
+(() => {
+const RoleEngine={ROLES:{VIEWER:'viewer',STREAMER:'streamer',MODERATOR:'moderator'},role:'streamer',is(r){return this.role===r;}};
+if(!RoleEngine.is(RoleEngine.ROLES.STREAMER)&&!RoleEngine.is(RoleEngine.ROLES.MODERATOR)){
+    alert("⚠️ Зөвхөн Streamer/Mod орж болно!");
+    window.location.href="index.html";
+}
+
+/* ===== SIMULATED METRICS ===== */
+let viewers=0,tokens=0,vip=0;
+const viewerCount=document.getElementById('viewerCount');
+const tokenCount=document.getElementById('tokenCount');
+const vipCount=document.getElementById('vipCount');
+
+setInterval(()=>{
+    viewers=Math.floor(Math.random()*300);
+    tokens=Math.floor(Math.random()*2000);
+    vip=Math.floor(Math.random()*50);
+    viewerCount.textContent=viewers;
+    tokenCount.textContent=tokens;
+    vipCount.textContent=vip;
+},2000);
+
+/* ===== CHAT SIMULATION ===== */
+const chatLog=document.getElementById('chatLog');
+const chatForm=document.getElementById('chatForm');
+const msgInput=document.getElementById('msgInput');
+
+chatForm.addEventListener('submit',e=>{
+    e.preventDefault();
+    const txt=msgInput.value.trim();
+    if(!txt) return;
+    const msg=document.createElement('div');
+    msg.textContent='You: '+txt;
+    chatLog.appendChild(msg);
+    chatLog.scrollTop=chatLog.scrollHeight;
+    msgInput.value='';
+});
+
+/* ===== SAFE NAVIGATION ===== */
+document.querySelectorAll('[data-link]').forEach(btn=>{
+  btn.addEventListener('click',()=>{const page=btn.dataset.link;if(page)window.location.href=page;});
+});
+})();
+</script>
+
+</body>
+</html>
