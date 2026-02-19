@@ -2,52 +2,167 @@
 <html lang="mn">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hola Live App</title>
-<link rel="stylesheet" href="assets/css/reset.css">
-<link rel="stylesheet" href="assets/css/variables.css">
-<link rel="stylesheet" href="assets/css/layout.css">
-<link rel="stylesheet" href="assets/css/components.css">
-<link rel="stylesheet" href="assets/css/animations.css">
-<link rel="stylesheet" href="assets/css/responsive.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Hola Live · App Shell</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#000000">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#0b0f1a;
+  --panel:#12182b;
+  --glass:rgba(255,255,255,0.08);
+  --border:rgba(255,255,255,0.15);
+  --text:#eaf6ff;
+  --muted:#9bb0c9;
+  --accent:#7df9ff;
+  --ok:#4dff88;
+  --danger:#ff3344;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+a{text-decoration:none;color:inherit;}
+
+.app{display:grid;grid-template-columns:260px 1fr;min-height:100vh;transition:all .3s;}
+.sidebar{background:linear-gradient(180deg,#0d1224,#070a14);padding:20px;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:20px;}
+.brand{font-family:'Montserrat',sans-serif;font-size:22px;font-weight:800;background:linear-gradient(90deg,var(--accent),#ff4fd8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.menu button{width:100%;padding:14px 16px;border-radius:16px;background:var(--glass);border:1px solid var(--border);color:var(--text);text-align:left;cursor:pointer;font-weight:600;transition:.25s;}
+.menu button:hover{transform:translateX(6px);}
+
+.header{height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid var(--border);}
+.status{display:flex;gap:10px;align-items:center;font-size:14px;}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok);}
+
+.page-container{flex:1;padding:20px;overflow-y:auto;background:var(--bg);transition:all .3s;}
+
+.bottom-nav{position:fixed;bottom:0;left:260px;right:0;height:60px;background:var(--panel);display:flex;justify-content:space-around;align-items:center;border-top:1px solid var(--border);}
+.bottom-nav button{background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:8px 12px;color:var(--text);cursor:pointer;transition:.25s;font-weight:600;}
+.bottom-nav button:hover{background:var(--accent);color:#000;box-shadow:0 0 12px var(--accent);}
+
+.role-panel{position:fixed;top:10px;right:10px;background:var(--panel);padding:12px;border-radius:12px;z-index:1000;font-size:12px;}
+
+.footer{height:44px;text-align:center;font-size:12px;color:var(--muted);display:flex;align-items:center;justify-content:center;margin-top:10px;}
+@media(max-width:1000px){.app{grid-template-columns:1fr;}.sidebar{display:none;}.bottom-nav{left:0;}}
+</style>
 </head>
+
 <body>
+<div class="app">
 
-<!-- Navbar -->
-<header id="navbar-container"></header>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">HOLA LIVE</div>
+    <div class="menu">
+      <button data-page="home.html">🏠 Нүүр</button>
+      <button data-page="live.html">🎥 Live</button>
+      <button data-page="invite.html">💌 Invite</button>
+      <button data-page="store.html">🛒 Store</button>
+      <button data-page="vip.html">👑 VIP</button>
+      <button data-page="ledger.html">📒 Ledger</button>
+      <button data-page="analytics.html">📊 Analytics</button>
+      <button data-page="moderator.html">🛡 Moderator</button>
+    </div>
+  </aside>
 
-<!-- Page content -->
-<main id="app-content"></main>
+  <!-- MAIN AREA -->
+  <div class="main">
+    <div class="header">
+      <div>Hola Live</div>
+      <div class="status"><div class="dot"></div> LIVE</div>
+    </div>
 
-<!-- Bottom nav -->
-<footer id="bottomnav-container"></footer>
+    <div class="page-container" id="pageContainer">
+      <!-- Dynamic page content loaded here -->
+    </div>
 
-<!-- Toast / Notifications -->
-<div id="toast-container"></div>
+    <div class="bottom-nav">
+      <button data-page="home.html">🏠</button>
+      <button data-page="live.html">🎥</button>
+      <button data-page="invite.html">💌</button>
+      <button data-page="store.html">🛒</button>
+      <button data-page="vip.html">👑</button>
+    </div>
 
-<footer style="position:fixed;bottom:6px;width:100%;text-align:center;font-size:0.7rem;opacity:0.5;">
-© 2026 Hola Live. Бүх эрх хуулиар хамгаалагдсан.
-</footer>
+    <div class="footer">
+      © 2026 Hola Live. Бүх эрх хуулиар хамгаалагдсан.
+    </div>
+  </div>
 
-<script src="assets/js/core/state.js"></script>
-<script src="assets/js/core/storage.js"></script>
-<script src="assets/js/core/router.js"></script>
-<script src="assets/js/core/notifications.js"></script>
-<script src="assets/js/core/install.js"></script>
+  <!-- ROLE PANEL -->
+  <div class="role-panel">
+    Role: <span id="currentRole">Viewer</span>
+    <br>
+    <button onclick="setRole('viewer')">Viewer</button>
+    <button onclick="setRole('streamer')">Streamer</button>
+    <button onclick="setRole('moderator')">Mod</button>
+  </div>
 
-<script src="assets/js/ui/navbar.js"></script>
-<script src="assets/js/ui/bottomnav.js"></script>
-<script src="assets/js/ui/toast.js"></script>
-<script src="assets/js/ui/modal.js"></script>
+</div>
 
-<script src="assets/js/economy/token.js"></script>
-<script src="assets/js/economy/gift.js"></script>
-<script src="assets/js/economy/referral.js"></script>
+<script>
+// ==========================
+// Role Engine
+// ==========================
+const RoleEngine = {
+  role:'viewer',
+  setRole(r){this.role=r;document.getElementById('currentRole').innerText=r;this.renderUI();},
+  getRole(){return this.role;},
+  is(r){return this.role===r;},
+  renderUI(){
+    // Example: show streamer controls
+    const streamerBtns=document.querySelectorAll('[data-streamer]');
+    streamerBtns.forEach(b=>b.style.display=this.is('streamer')?'inline-block':'none');
+  }
+};
 
-<script src="assets/js/features/analytics.js"></script>
-<script src="assets/js/features/moderator.js"></script>
-<script src="assets/js/features/liveEngine.js"></script>
+function setRole(role){RoleEngine.setRole(role);}
 
-<script src="assets/js/app.js"></script>
+// ==========================
+// Dynamic Page Loader
+// ==========================
+const pageContainer=document.getElementById('pageContainer');
+
+async function loadPage(page){
+  try{
+    const res=await fetch('pages/'+page);
+    if(!res.ok)throw new Error('Failed to load '+page);
+    const html=await res.text();
+    pageContainer.innerHTML=html;
+  }catch(e){
+    pageContainer.innerHTML='<p style="color:red;">'+e.message+'</p>';
+  }
+}
+
+// ==========================
+// Navigation
+// ==========================
+document.querySelectorAll('[data-page]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const page=btn.dataset.page;
+    loadPage(page);
+  });
+});
+
+// ==========================
+// Initial Load
+// ==========================
+loadPage('home.html');
+
+// ==========================
+// PWA Service Worker
+// ==========================
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('service-worker.js')
+  .then(()=>console.log('SW Registered'))
+  .catch(err=>console.error('SW registration failed',err));
+}
+</script>
+
 </body>
 </html>
