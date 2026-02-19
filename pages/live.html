@@ -1,36 +1,84 @@
 <!DOCTYPE html>
-<html>
+<html lang="mn">
 <head>
 <meta charset="UTF-8">
-<title>Hola Live</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hola Live - Stream</title>
 
-<link rel="stylesheet" href="assets/css/live.css">
-<link rel="stylesheet" href="assets/css/realtime.css">
-<link rel="stylesheet" href="assets/css/platform.css">
+<link rel="stylesheet" href="../assets/css/reset.css">
+<link rel="stylesheet" href="../assets/css/variables.css">
+<link rel="stylesheet" href="../assets/css/layout.css">
+<link rel="stylesheet" href="../assets/css/components.css">
+<link rel="stylesheet" href="../assets/css/animations.css">
+<link rel="stylesheet" href="../assets/css/responsive.css">
 
 <style>
 body{
     margin:0;
     background:#000;
     color:white;
-    font-family:Arial;
+    font-family:Arial, sans-serif;
     overflow:hidden;
     transition:opacity 0.3s ease;
 }
 
+/* STREAM VIDEO & BACKGROUND */
 .video-area{
     height:100vh;
-    background:linear-gradient(180deg,#111,#000);
     position:relative;
+    background:linear-gradient(180deg,#111,#000);
 }
 
+#liveCanvas{
+    position:absolute;
+    inset:0;
+    z-index:0;
+}
+
+/* TOP BAR */
+.live-top-bar{
+    position:fixed;
+    top:10px;
+    left:50%;
+    transform:translateX(-50%);
+    display:flex;
+    gap:1.2rem;
+    font-size:14px;
+    z-index:1000;
+    background:rgba(0,0,0,.35);
+    padding:6px 12px;
+    border-radius:8px;
+}
+
+/* WALLET / VIP */
 .wallet-box{
     position:absolute;
     top:10px;
-    right:120px;
+    right:140px;
     font-size:14px;
+    z-index:1000;
+}
+.vip-badge{
+    position:absolute;
+    top:50px;
+    right:140px;
+    font-size:14px;
+    color:gold;
 }
 
+/* STREAMER PANEL */
+.streamer-controls{
+    position:fixed;
+    bottom:90px;
+    right:10px;
+    background:#222;
+    padding:12px;
+    border-radius:10px;
+    display:none;
+    z-index:1000;
+}
+
+/* ROLE PANEL */
 .role-panel{
     position:fixed;
     top:10px;
@@ -42,37 +90,85 @@ body{
     z-index:1000;
 }
 
-.streamer-controls{
+/* BOTTOM CONTROLS */
+.live-bottom-bar{
     position:fixed;
-    bottom:90px;
-    right:10px;
-    background:#222;
-    padding:10px;
-    border-radius:10px;
-    display:none;
+    bottom:10px;
+    left:50%;
+    transform:translateX(-50%);
+    display:flex;
+    gap:8px;
     z-index:1000;
 }
+.live-btn{
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    background:rgba(0,255,255,.2);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    font-size:20px;
+    transition:all .3s ease;
+}
+.live-btn:hover{
+    background:#00eaff;
+    color:#000;
+}
 
-.vip-badge{
+/* Chat Box */
+.chat-box{
     position:absolute;
-    top:50px;
-    right:120px;
-    font-size:14px;
-    color:gold;
+    bottom:70px;
+    left:10px;
+    width:240px;
+    max-height:50vh;
+    background:rgba(0,0,0,0.5);
+    padding:6px;
+    border-radius:8px;
+    overflow-y:auto;
+    font-size:13px;
+    z-index:1000;
+}
+.chat-msg{
+    margin-bottom:4px;
+}
+.user-msg{
+    color:#00eaff;
+}
+
+/* Gift Pop Animation */
+.combo-pop{
+    position:absolute;
+    font-size:20px;
+    font-weight:bold;
+    color:#00eaff;
+    animation:giftFloat 2s ease-out forwards;
+    z-index:1500;
+}
+@keyframes giftFloat{
+    0%{opacity:1; transform:translateY(0);}
+    100%{opacity:0; transform:translateY(-80px);}
+}
+
+/* Footer */
+.live-footer{
+    position:fixed;
+    bottom:0;
+    width:100%;
+    text-align:center;
+    font-size:12px;
+    opacity:.6;
+    z-index:1000;
 }
 </style>
 </head>
 <body>
 
+<!-- STREAM VIDEO AREA -->
 <div class="video-area">
-
-    <!-- TOP BAR -->
-    <div class="live-top-bar">
-        <div class="live-badge">LIVE</div>
-        <div>👁 <span id="viewerCount">0</span></div>
-        <div>⏱ <span id="liveTimer">00:00</span></div>
-        <div>💎 <span id="earnings">0</span></div>
-    </div>
+    <canvas id="liveCanvas"></canvas>
 
     <!-- WALLET -->
     <div class="wallet-box">
@@ -82,9 +178,25 @@ body{
     <!-- VIP BADGE -->
     <div class="vip-badge" id="vipBadge"></div>
 
+    <!-- CHAT -->
+    <div class="chat-box" id="chatBox"></div>
+
 </div>
 
-<!-- BOTTOM CONTROLS -->
+<!-- STREAMER PANEL -->
+<div class="streamer-controls" id="streamerPanel">
+    <button onclick="stopLive()">⛔ Stop Live</button>
+</div>
+
+<!-- ROLE PANEL -->
+<div class="role-panel">
+Role: <span id="currentRole"></span><br><br>
+<button onclick="RoleEngine.setRole('viewer')">Viewer</button>
+<button onclick="RoleEngine.setRole('streamer')">Streamer</button>
+<button onclick="RoleEngine.setRole('moderator')">Mod</button>
+</div>
+
+<!-- BOTTOM BAR -->
 <div class="live-bottom-bar">
     <div class="live-btn" onclick="sendChat()">💬</div>
     <div class="live-btn" onclick="sendGift()">🎁</div>
@@ -96,128 +208,129 @@ body{
     <div class="live-btn" onclick="openModPanel()">🛡</div>
 </div>
 
-<!-- STREAMER PANEL -->
-<div class="streamer-controls" id="streamerPanel">
-    <button onclick="stopLive()">⛔ Stop Live</button>
-</div>
-
-<!-- DEV ROLE PANEL -->
-<div class="role-panel">
-    Role: <span id="currentRole"></span><br><br>
-    <button onclick="RoleEngine.setRole('viewer')">Viewer</button>
-    <button onclick="RoleEngine.setRole('streamer')">Streamer</button>
-    <button onclick="RoleEngine.setRole('moderator')">Mod</button>
-</div>
+<!-- FOOTER -->
+<footer class="live-footer">
+© 2026 Hola Live. Бүх эрх хуулиар хамгаалагдсан.
+</footer>
 
 <!-- ========================= -->
 <!-- SCRIPTS -->
 <!-- ========================= -->
-
-<script src="assets/js/eventBus.js"></script>
-<script src="assets/js/roleEngine.js"></script>
-<script src="assets/js/guard.js"></script>
-<script src="assets/js/liveEngine.js"></script>
-<script src="assets/js/realtimeEngine.js"></script>
-<script src="assets/js/economyEngine.js"></script>
-<script src="assets/js/leaderboard.js"></script>
-<script src="assets/js/growthEngine.js"></script>
-<script src="assets/js/vipEngine.js"></script>
-<script src="assets/js/analyticsEngine.js"></script>
-<script src="assets/js/moderatorPanel.js"></script>
-<script src="assets/js/uiEnhance.js"></script>
+<script src="../assets/js/core/state.js"></script>
+<script src="../assets/js/core/router.js"></script>
+<script src="../assets/js/core/notifications.js"></script>
+<script src="../assets/js/economy/token.js"></script>
+<script src="../assets/js/economy/gift.js"></script>
+<script src="../assets/js/features/liveEngine.js"></script>
+<script src="../assets/js/uiEnhance.js"></script>
 
 <script>
+// ==== Canvas Stream Simulation ====
+const canvas = document.getElementById('liveCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-// ===============================
-// ROLE GUARD
-// ===============================
+let particles = [];
+for(let i=0;i<600;i++){
+    particles.push({
+        x: Math.random()*canvas.width,
+        y: Math.random()*canvas.height,
+        size: Math.random()*2+1,
+        speed: Math.random()*1.5+0.2
+    });
+}
+function animateCanvas(){
+    ctx.fillStyle='rgba(0,0,0,0.2)';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle='#00eaff';
+    particles.forEach(p=>{
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+        ctx.fill();
+        p.y -= p.speed;
+        if(p.y<0) p.y=canvas.height;
+    });
+    requestAnimationFrame(animateCanvas);
+}
+animateCanvas();
+window.addEventListener('resize',()=>{
+    canvas.width=window.innerWidth;
+    canvas.height=window.innerHeight;
+});
 
-requireRole([
-    RoleEngine.ROLES.VIEWER,
-    RoleEngine.ROLES.STREAMER,
-    RoleEngine.ROLES.MODERATOR
-]);
+// ==== Viewer Count Simulation ====
+const viewerCountEl = document.getElementById('viewerCount') || document.createElement('span');
+let viewers = Math.floor(Math.random()*500);
+if(viewerCountEl) viewerCountEl.textContent = `Үзэгчид: ${viewers}`;
+setInterval(()=>{
+    viewers += Math.floor(Math.random()*3-1);
+    if(viewers<0) viewers=0;
+    if(viewerCountEl) viewerCountEl.textContent = `Үзэгчид: ${viewers}`;
+},3000);
 
-// ===============================
-// INIT UI
-// ===============================
+// ==== Chat Simulation ====
+const chatBox = document.getElementById('chatBox');
+const fakeMsgs = ["Сайн уу!", "Стрим сайн байна!", "Хандалт их байна!", "💖💖", "Баярлалаа!"];
+setInterval(()=>{
+    const msg = fakeMsgs[Math.floor(Math.random()*fakeMsgs.length)];
+    const div = document.createElement('div');
+    div.className='chat-msg';
+    div.textContent = msg;
+    chatBox.appendChild(div);
+    chatBox.scrollTop = chatBox.scrollHeight;
+},2500);
 
-document.addEventListener("DOMContentLoaded",()=>{
+// ==== Gift Animation ====
+let activeGifts = [];
+function spawnGift(type){
+    const gift = {
+        type,
+        x: Math.random()*canvas.width,
+        y: canvas.height,
+        size: 40 + Math.random()*20,
+        speed: 2 + Math.random()*2
+    };
+    activeGifts.push(gift);
+}
+function animateGifts(){
+    ctx.fillStyle='rgba(0,0,0,0)';
+    activeGifts.forEach((gift,i)=>{
+        ctx.font = `${gift.size}px Arial`;
+        ctx.fillText(gift.type,gift.x,gift.y);
+        gift.y -= gift.speed;
+        if(gift.y<-50) activeGifts.splice(i,1);
+    });
+    requestAnimationFrame(animateGifts);
+}
+animateGifts();
 
+// Gift buttons
+document.querySelectorAll('.live-btn').forEach(btn=>{
+    if(btn.innerText==='🎁') btn.addEventListener('click',()=>spawnGift('🎁'));
+    if(btn.innerText==='❤️') btn.addEventListener('click',()=>spawnGift('❤️'));
+});
+
+// ==== Role & Streamer Panel ====
+document.addEventListener('DOMContentLoaded',()=>{
     document.getElementById("currentRole").innerText = RoleEngine.getRole();
-
     if(RoleEngine.is(RoleEngine.ROLES.STREAMER)){
         document.getElementById("streamerPanel").style.display="block";
     }
-
-    Economy.updateWalletUI();
-
     if(VIP.isVIP()){
         document.getElementById("vipBadge").innerText="👑 VIP ACTIVE";
     }
 });
 
-// ===============================
-// STREAMER CONTROL
-// ===============================
-
+// ==== Streamer Control ====
 function stopLive(){
     if(!RoleEngine.is(RoleEngine.ROLES.STREAMER)){
         alert("Only Streamer can stop live");
         return;
     }
     alert("Live Ended 🔴");
-    window.location.href="index.html";
+    window.location.href="../index.html";
 }
-
-// ===============================
-// CHAT
-// ===============================
-
-function sendChat(){
-    LiveEvent.emit("chat_message",{text:"You sent a message!"});
-}
-
-// ===============================
-// GIFT SYSTEM
-// ===============================
-
-function sendGift(){
-
-    const cost = 20;
-
-    if(Economy.spendTokens(cost)){
-        LiveEvent.emit("gift_received", cost);
-        updateLeaderboard("You", cost);
-        Analytics.recordGift(cost);
-    }
-}
-
-// ===============================
-// REACTION
-// ===============================
-
-function sendReaction(){
-    const heart=document.createElement("div");
-    heart.className="reaction-float";
-    heart.innerText="❤️";
-    heart.style.left=Math.random()*90+"%";
-    document.body.appendChild(heart);
-    setTimeout(()=>heart.remove(),3000);
-}
-
-// ===============================
-// VISUAL GIFT POP
-// ===============================
-
-LiveEvent.on("gift_received",(value)=>{
-    const el=document.createElement("div");
-    el.className="combo-pop";
-    el.innerText="🎁 +"+value;
-    document.body.appendChild(el);
-    setTimeout(()=>el.remove(),2000);
-});
-
 </script>
 
 </body>
