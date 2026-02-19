@@ -1,9 +1,70 @@
-<h2>Live</h2>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Hola Live</title>
+<link rel="stylesheet" href="assets/css/live.css">
+<style>
+body {
+    margin:0;
+    background:black;
+    color:white;
+    font-family:Arial;
+}
+.video-area {
+    height:100vh;
+    background: linear-gradient(180deg,#111,#000);
+    position:relative;
+}
+</style>
+</head>
+<body>
 
-<p>Токен: <span id="liveTokens"></span></p>
+<div class="video-area">
 
-<button onclick="GiftEngine.send(50)">🎁 50 токен бэлэг</button>
+    <div class="live-top-bar">
+        <div class="live-badge">LIVE</div>
+        <div>👁 <span id="viewerCount">0</span></div>
+        <div>⏱ <span id="liveTimer">00:00</span></div>
+        <div>💎 <span id="earnings">0</span></div>
+    </div>
+
+    <div id="giftContainer"></div>
+
+</div>
+
+<div class="live-bottom-bar">
+    <div class="live-btn" onclick="sendChat()">💬</div>
+    <div class="live-btn" onclick="sendGift()">🎁</div>
+    <div class="live-btn" onclick="sendReaction()">❤️</div>
+    <div class="live-btn">⭐</div>
+    <div class="live-btn">🔗</div>
+</div>
+
+<script src="assets/js/eventBus.js"></script>
+<script src="assets/js/liveEngine.js"></script>
 
 <script>
-document.getElementById("liveTokens").innerText = State.get().user.tokens;
+function sendGift(){
+    LiveEvent.emit("gift_received", 10);
+}
+
+function sendReaction(){
+    const heart = document.createElement("div");
+    heart.className = "gift-float";
+    heart.innerText = "❤️";
+    document.body.appendChild(heart);
+    setTimeout(()=>heart.remove(),2000);
+}
+
+LiveEvent.on("gift_received",(value)=>{
+    const gift = document.createElement("div");
+    gift.className = "gift-float";
+    gift.innerText = "🎁 +" + value;
+    document.body.appendChild(gift);
+    setTimeout(()=>gift.remove(),2000);
+});
 </script>
+
+</body>
+</html>
