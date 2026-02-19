@@ -1,2 +1,196 @@
-<h2>Профайл</h2>
-<button onclick="Notify.toast('VIP удахгүй')">VIP</button>
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hola Live - Profile</title>
+
+<link rel="stylesheet" href="../assets/css/reset.css">
+<link rel="stylesheet" href="../assets/css/variables.css">
+<link rel="stylesheet" href="../assets/css/layout.css">
+<link rel="stylesheet" href="../assets/css/components.css">
+<link rel="stylesheet" href="../assets/css/animations.css">
+
+<style>
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:#0a0a0a;
+    color:#fff;
+    overflow-x:hidden;
+}
+
+.container{
+    max-width:720px;
+    margin:0 auto;
+    padding:20px;
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+    text-align:center;
+}
+
+h1{
+    font-size:2rem;
+    letter-spacing:.1em;
+    margin-bottom:0.5rem;
+}
+
+.wallet{
+    font-size:14px;
+    text-align:right;
+}
+
+.vip-badge{
+    font-size:16px;
+    color:gold;
+    margin:10px 0;
+    animation:glowPulse 2s infinite;
+}
+
+@keyframes glowPulse{
+    0%,100%{text-shadow:0 0 5px gold;}
+    50%{text-shadow:0 0 15px gold;}
+}
+
+.profile-card{
+    background:linear-gradient(180deg,#111,#222);
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 0 20px #00eaff55;
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+    align-items:center;
+    position:relative;
+    overflow:hidden;
+}
+
+.stat{
+    display:flex;
+    justify-content:space-between;
+    width:80%;
+    font-size:14px;
+    padding:5px 0;
+    border-bottom:1px solid #00eaff33;
+}
+
+.gift-btn{
+    padding:8px 20px;
+    border-radius:999px;
+    border:none;
+    background:#00eaff;
+    color:#000;
+    cursor:pointer;
+    transition:.3s;
+}
+.gift-btn:hover{
+    background:#0cf;
+    box-shadow:0 0 20px #00eaff55;
+}
+
+.profile-particle{
+    position:absolute;
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:#0ff;
+    opacity:.7;
+    animation:profileParticle 5s linear infinite;
+}
+
+@keyframes profileParticle{
+    0%{transform:translateY(0) scale(0.5);}
+    50%{transform:translateY(-200px) scale(1);}
+    100%{transform:translateY(0) scale(0.5);}
+}
+
+/* Footer */
+.footer{
+    margin-top:50px;
+    font-size:12px;
+    opacity:.6;
+    text-align:center;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Миний Профайл</h1>
+
+    <div class="wallet">Wallet: 💎 <span id="walletTokens">0</span></div>
+
+    <div class="vip-badge" id="vipBadge">👑 VIP статус</div>
+
+    <div class="profile-card" id="profileCard">
+        <div class="stat"><span>Нийт токен:</span><span id="totalTokens">0</span></div>
+        <div class="stat"><span>Зоос ашигласан:</span><span id="spentTokens">0</span></div>
+        <div class="stat"><span>Бэлэг авсан:</span><span id="giftsReceived">0</span></div>
+        <div class="stat"><span>Бэлэг өгсөн:</span><span id="giftsSent">0</span></div>
+
+        <button class="gift-btn" id="sendGiftBtn">Бэлэг илгээх</button>
+    </div>
+
+</div>
+
+<footer class="footer">
+© 2026 Hola Live. Бүх эрх хуулиар хамгаалагдсан.
+</footer>
+
+<script src="../assets/js/core/state.js"></script>
+<script src="../assets/js/core/storage.js"></script>
+<script src="../assets/js/economy/token.js"></script>
+<script src="../assets/js/economy/gift.js"></script>
+<script src="../assets/js/economy/vip.js"></script>
+<script src="../assets/js/uiEnhance.js"></script>
+
+<script>
+// ==== INIT WALLET & STATS ====
+function updateProfileStats(){
+    document.getElementById("walletTokens").innerText = Economy.getWallet();
+    document.getElementById("totalTokens").innerText = Economy.getTotalTokens();
+    document.getElementById("spentTokens").innerText = Economy.getSpentTokens();
+    document.getElementById("giftsReceived").innerText = Gift.getReceived();
+    document.getElementById("giftsSent").innerText = Gift.getSent();
+
+    if(VIP.isVIP()){
+        document.getElementById("vipBadge").innerText="👑 VIP ACTIVE";
+    }
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+    updateProfileStats();
+});
+
+// ==== SEND GIFT ====
+document.getElementById("sendGiftBtn").addEventListener("click",()=>{
+    const cost = 20;
+    if(Economy.spendTokens(cost)){
+        Gift.send(cost);
+        alert("🎁 Бэлэг илгээсэн!");
+    } else {
+        alert("💎 Wallet-д токен хүрэлцэхгүй байна!");
+    }
+    updateProfileStats();
+});
+
+// ==== PARTICLES ====
+function createParticles(count=20){
+    const container = document.getElementById("profileCard");
+    for(let i=0;i<count;i++){
+        const p=document.createElement("div");
+        p.className="profile-particle";
+        p.style.left=Math.random()*90+"%";
+        p.style.top=Math.random()*90+"%";
+        container.appendChild(p);
+        setTimeout(()=>p.remove(),5000);
+    }
+}
+
+setInterval(()=>{createParticles(10);},1500);
+</script>
+
+</body>
+</html>
