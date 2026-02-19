@@ -3,19 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <title>Hola Live</title>
+
 <link rel="stylesheet" href="assets/css/live.css">
+<link rel="stylesheet" href="assets/css/realtime.css">
+<link rel="stylesheet" href="assets/css/platform.css">
+
 <style>
 body {
     margin:0;
     background:black;
     color:white;
     font-family:Arial;
+    overflow:hidden;
 }
+
 .video-area {
     height:100vh;
     background: linear-gradient(180deg,#111,#000);
     position:relative;
 }
+
+/* Role Panel */
 .role-panel {
     position:fixed;
     top:10px;
@@ -24,15 +32,27 @@ body {
     padding:10px;
     border-radius:10px;
     font-size:12px;
+    z-index:1000;
 }
+
+/* Streamer Controls */
 .streamer-controls {
     position:fixed;
-    bottom:80px;
+    bottom:90px;
     right:10px;
     background:#222;
     padding:10px;
     border-radius:10px;
     display:none;
+    z-index:1000;
+}
+
+/* Wallet */
+.wallet-box {
+    position:absolute;
+    top:10px;
+    right:120px;
+    font-size:14px;
 }
 </style>
 </head>
@@ -40,6 +60,7 @@ body {
 
 <div class="video-area">
 
+    <!-- LIVE TOP BAR -->
     <div class="live-top-bar">
         <div class="live-badge">LIVE</div>
         <div>👁 <span id="viewerCount">0</span></div>
@@ -47,25 +68,28 @@ body {
         <div>💎 <span id="earnings">0</span></div>
     </div>
 
-    <div id="giftContainer"></div>
+    <!-- WALLET -->
+    <div class="wallet-box">
+        Wallet: 💎 <span id="walletTokens">0</span>
+    </div>
 
 </div>
 
-<!-- Bottom Control -->
+<!-- BOTTOM CONTROLS -->
 <div class="live-bottom-bar">
     <div class="live-btn" onclick="sendChat()">💬</div>
     <div class="live-btn" onclick="sendGift()">🎁</div>
     <div class="live-btn" onclick="sendReaction()">❤️</div>
-    <div class="live-btn">⭐</div>
-    <div class="live-btn">🔗</div>
+    <div class="live-btn" onclick="window.location.href='leaderboard.html'">🏆</div>
+    <div class="live-btn" onclick="window.location.href='store.html'">🛒</div>
 </div>
 
-<!-- Streamer Controls -->
+<!-- STREAMER PANEL -->
 <div class="streamer-controls" id="streamerPanel">
     <button onclick="stopLive()">⛔ Stop Live</button>
 </div>
 
-<!-- Dev Role Switch Panel -->
+<!-- ROLE DEV PANEL -->
 <div class="role-panel">
     Role: <span id="currentRole"></span><br><br>
     <button onclick="RoleEngine.setRole('viewer')">Viewer</button>
@@ -73,29 +97,41 @@ body {
     <button onclick="RoleEngine.setRole('moderator')">Mod</button>
 </div>
 
+<!-- SCRIPTS -->
 <script src="assets/js/eventBus.js"></script>
 <script src="assets/js/roleEngine.js"></script>
 <script src="assets/js/guard.js"></script>
 <script src="assets/js/liveEngine.js"></script>
+<script src="assets/js/realtimeEngine.js"></script>
+<script src="assets/js/economyEngine.js"></script>
+<script src="assets/js/leaderboard.js"></script>
 
 <script>
 
-// Permission Guard
+// ===============================
+// PERMISSION GUARD
+// ===============================
+
 requireRole([
     RoleEngine.ROLES.VIEWER,
     RoleEngine.ROLES.STREAMER,
     RoleEngine.ROLES.MODERATOR
 ]);
 
-// Show Current Role
+// ===============================
+// INIT ROLE UI
+// ===============================
+
 document.getElementById("currentRole").innerText = RoleEngine.getRole();
 
-// Streamer UI
 if(RoleEngine.is(RoleEngine.ROLES.STREAMER)){
     document.getElementById("streamerPanel").style.display = "block";
 }
 
-// Stop Live (Streamer only)
+// ===============================
+// STREAMER CONTROL
+// ===============================
+
 function stopLive(){
     if(!RoleEngine.is(RoleEngine.ROLES.STREAMER)){
         alert("Only Streamer can stop live");
@@ -105,29 +141,56 @@ function stopLive(){
     window.location.href = "index.html";
 }
 
-// Chat Simulation
+// ===============================
+// CHAT
+// ===============================
+
 function sendChat(){
-    alert("Chat sent 💬");
+    LiveEvent.emit("chat_message",{text:"You sent a message!"});
 }
 
-// Gift
+// ===============================
+// GIFT SYSTEM (PHASE 7 CONNECTED)
+// ===============================
+
 function sendGift(){
-    LiveEvent.emit("gift_received", 10);
+
+    const giftCost = 20;
+
+    if(Economy.spendTokens(giftCost)){
+        LiveEvent.emit("gift_received", giftCost);
+        updateLeaderboard("You", giftCost);
+    }
 }
 
-// Reaction
+// ===============================
+// REACTION
+// ===============================
+
 function sendReaction(){
     const heart = document.createElement("div");
-    heart.className = "gift-float";
+    heart.className = "reaction-float";
     heart.innerText = "❤️";
+    heart.style.left = Math.random()*90 + "%";
     document.body.appendChild(heart);
-    setTimeout(()=>heart.remove(),2000);
+    setTimeout(()=>heart.remove(),3000);
 }
 
-// Gift Listener
+// ===============================
+// AUTO UPDATE WALLET
+// ===============================
+
+document.addEventListener("DOMContentLoaded", ()=>{
+    Economy.updateWalletUI();
+});
+
+// ===============================
+// GIFT LISTENER (VISUAL EFFECT)
+// ===============================
+
 LiveEvent.on("gift_received",(value)=>{
     const gift = document.createElement("div");
-    gift.className = "gift-float";
+    gift.className = "combo-pop";
     gift.innerText = "🎁 +" + value;
     document.body.appendChild(gift);
     setTimeout(()=>gift.remove(),2000);
