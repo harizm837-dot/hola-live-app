@@ -1,11 +1,81 @@
-<h2>Нүүр</h2>
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hola Live - Home</title>
+<link rel="stylesheet" href="../assets/css/reset.css">
+<link rel="stylesheet" href="../assets/css/variables.css">
+<link rel="stylesheet" href="../assets/css/layout.css">
+<link rel="stylesheet" href="../assets/css/components.css">
+<link rel="stylesheet" href="../assets/css/animations.css">
+<link rel="stylesheet" href="../assets/css/responsive.css">
+</head>
+<body>
 
-<p>Токен: <span id="tokenCount"></span></p>
+<div class="home-container">
+    <!-- Hero / Welcome -->
+    <section class="hero">
+        <h1>Амьд Стрим Орчлон</h1>
+        <p>Hola Live бол стример төвтэй, token + бэлгийн эдийн засагт суурилсан амьд платформ.</p>
+        <button id="startLiveBtn">Стрим эхлүүлэх</button>
+    </section>
 
-<button onclick="TokenEngine.add(100,'Daily bonus')">
-Өдөр тутмын бонус
-</button>
+    <!-- Featured Streams -->
+    <section class="featured-streams">
+        <h2>Онцлох стримууд</h2>
+        <div class="streams-grid" id="streamsGrid">
+            <!-- Dynamic stream cards will be injected here -->
+        </div>
+    </section>
+
+    <!-- Quick Actions -->
+    <section class="quick-actions">
+        <div class="action-card" id="goToShop">Дэлгүүр</div>
+        <div class="action-card" id="goToVIP">VIP өрөө</div>
+        <div class="action-card" id="inviteFriends">Урилга</div>
+    </section>
+</div>
+
+<footer class="home-footer">
+© 2026 Hola Live. Бүх эрх хуулиар хамгаалагдсан.
+</footer>
+
+<script src="../assets/js/core/state.js"></script>
+<script src="../assets/js/core/router.js"></script>
+<script src="../assets/js/ui/modal.js"></script>
+<script src="../assets/js/features/liveEngine.js"></script>
+<script src="../assets/js/economy/token.js"></script>
+<script src="../assets/js/economy/gift.js"></script>
+<script src="../assets/js/economy/referral.js"></script>
 
 <script>
-document.getElementById("tokenCount").innerText = State.get().user.tokens;
+// Example: dynamically load featured streams
+const streamsGrid = document.getElementById('streamsGrid');
+for(let i=1;i<=6;i++){
+    const card = document.createElement('div');
+    card.classList.add('stream-card');
+    card.innerHTML = `
+        <div class="stream-thumbnail"></div>
+        <h3>Streamer ${i}</h3>
+        <p>Үзэгчид: ${Math.floor(Math.random()*1000)}</p>
+        <button class="joinBtn">Нэвтрэх</button>
+    `;
+    streamsGrid.appendChild(card);
+}
+
+// Quick actions
+document.getElementById('goToShop').addEventListener('click',()=>{router.navigate('shop.html');});
+document.getElementById('goToVIP').addEventListener('click',()=>{router.navigate('vip.html');});
+document.getElementById('inviteFriends').addEventListener('click',()=>{router.navigate('invite.html');});
+document.querySelectorAll('.joinBtn').forEach(btn=>{
+    btn.addEventListener('click',(e)=>{
+        const streamerName = e.target.closest('.stream-card').querySelector('h3').textContent;
+        alert(`${streamerName} руу нэвтэрч байна...`);
+        router.navigate('live.html');
+    });
+});
 </script>
+
+</body>
+</html>
