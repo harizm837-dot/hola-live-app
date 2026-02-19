@@ -2,7 +2,7 @@
 <html lang="mn">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Hola Live App</title>
 <link rel="stylesheet" href="assets/css/reset.css">
 <link rel="stylesheet" href="assets/css/variables.css">
@@ -10,42 +10,42 @@
 <link rel="stylesheet" href="assets/css/components.css">
 <link rel="stylesheet" href="assets/css/animations.css">
 <link rel="stylesheet" href="assets/css/responsive.css">
-<meta name="theme-color" content="#000000">
-<link rel="manifest" href="manifest.json">
 </head>
 <body>
-<div id="app-container">
-  <!-- Navbar -->
-  <nav id="navbar"></nav>
-  
-  <!-- Main content / pages injected here -->
-  <main id="page-container"></main>
-  
-  <!-- Bottom navigation -->
-  <nav id="bottomnav"></nav>
-  
-  <!-- Toast notifications -->
-  <div id="toast-container"></div>
-  
-  <!-- Modals -->
-  <div id="modal-container"></div>
-</div>
+
+<!-- Navbar -->
+<header id="navbar-container"></header>
+
+<!-- Page content -->
+<main id="app-content"></main>
+
+<!-- Bottom nav -->
+<footer id="bottomnav-container"></footer>
+
+<!-- Toasts / Notifications -->
+<div id="toast-container"></div>
 
 <script src="assets/js/core/state.js"></script>
+<script src="assets/js/core/storage.js"></script>
 <script src="assets/js/core/router.js"></script>
+<script src="assets/js/core/notifications.js"></script>
+<script src="assets/js/core/install.js"></script>
+
 <script src="assets/js/ui/navbar.js"></script>
 <script src="assets/js/ui/bottomnav.js"></script>
 <script src="assets/js/ui/toast.js"></script>
 <script src="assets/js/ui/modal.js"></script>
+
+<script src="assets/js/economy/token.js"></script>
+<script src="assets/js/economy/gift.js"></script>
+<script src="assets/js/economy/referral.js"></script>
+
+<script src="assets/js/features/analytics.js"></script>
+<script src="assets/js/features/moderator.js"></script>
+<script src="assets/js/features/liveEngine.js"></script>
+
 <script src="assets/js/app.js"></script>
-<script>
-// Initialize App
-document.addEventListener("DOMContentLoaded", () => {
-  App.init();       // app.js
-  Router.init();    // router.js
-  Navbar.init();    // navbar.js
-  BottomNav.init(); // bottomnav.js
-});
-</script>
+
+<footer style="position:fixed;bottom:6px;width:100%;text-align:center;font-size:0.7rem;opacity:0.5;">© 2026 Hola Live. Бүх эрх хуулиар хамгаалагдсан.</footer>
 </body>
 </html>
