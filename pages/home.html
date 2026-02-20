@@ -1,81 +1,104 @@
-<!DOCTYPE html>
-<html lang="mn">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hola Live - Home</title>
-<link rel="stylesheet" href="../assets/css/reset.css">
-<link rel="stylesheet" href="../assets/css/variables.css">
-<link rel="stylesheet" href="../assets/css/layout.css">
-<link rel="stylesheet" href="../assets/css/components.css">
-<link rel="stylesheet" href="../assets/css/animations.css">
-<link rel="stylesheet" href="../assets/css/responsive.css">
-</head>
-<body>
+<div class="home-page">
 
-<div class="home-container">
-    <!-- Hero / Welcome -->
-    <section class="hero">
-        <h1>Амьд Стрим Орчлон</h1>
-        <p>Hola Live бол стример төвтэй, token + бэлгийн эдийн засагт суурилсан амьд платформ.</p>
-        <button id="startLiveBtn">Стрим эхлүүлэх</button>
-    </section>
-
-    <!-- Featured Streams -->
-    <section class="featured-streams">
-        <h2>Онцлох стримууд</h2>
-        <div class="streams-grid" id="streamsGrid">
-            <!-- Dynamic stream cards will be injected here -->
-        </div>
-    </section>
-
-    <!-- Quick Actions -->
-    <section class="quick-actions">
-        <div class="action-card" id="goToShop">Дэлгүүр</div>
-        <div class="action-card" id="goToVIP">VIP өрөө</div>
-        <div class="action-card" id="inviteFriends">Урилга</div>
-    </section>
-</div>
-
-<footer class="home-footer">
-© 2026 Hola Live. Бүх эрх хуулиар хамгаалагдсан.
-</footer>
-
-<script src="../assets/js/core/state.js"></script>
-<script src="../assets/js/core/router.js"></script>
-<script src="../assets/js/ui/modal.js"></script>
-<script src="../assets/js/features/liveEngine.js"></script>
-<script src="../assets/js/economy/token.js"></script>
-<script src="../assets/js/economy/gift.js"></script>
-<script src="../assets/js/economy/referral.js"></script>
-
-<script>
-// Example: dynamically load featured streams
-const streamsGrid = document.getElementById('streamsGrid');
-for(let i=1;i<=6;i++){
-    const card = document.createElement('div');
-    card.classList.add('stream-card');
-    card.innerHTML = `
-        <div class="stream-thumbnail"></div>
-        <h3>Streamer ${i}</h3>
-        <p>Үзэгчид: ${Math.floor(Math.random()*1000)}</p>
-        <button class="joinBtn">Нэвтрэх</button>
-    `;
-    streamsGrid.appendChild(card);
+<style>
+.home-page{
+  padding:20px;
+  padding-bottom:100px;
 }
 
-// Quick actions
-document.getElementById('goToShop').addEventListener('click',()=>{router.navigate('shop.html');});
-document.getElementById('goToVIP').addEventListener('click',()=>{router.navigate('vip.html');});
-document.getElementById('inviteFriends').addEventListener('click',()=>{router.navigate('invite.html');});
-document.querySelectorAll('.joinBtn').forEach(btn=>{
-    btn.addEventListener('click',(e)=>{
-        const streamerName = e.target.closest('.stream-card').querySelector('h3').textContent;
-        alert(`${streamerName} руу нэвтэрч байна...`);
-        router.navigate('live.html');
-    });
-});
-</script>
+.hero{
+  margin-top:30px;
+}
 
-</body>
-</html>
+.hero h1{
+  font-size:32px;
+  font-weight:800;
+  line-height:1.2;
+  margin-bottom:10px;
+}
+
+.hero p{
+  color:#aaa;
+  font-size:15px;
+  margin-bottom:20px;
+}
+
+.cta-btn{
+  display:inline-block;
+  padding:12px 22px;
+  border-radius:30px;
+  background:linear-gradient(90deg,#00f0ff,#ff00c8);
+  font-weight:700;
+  border:none;
+  color:#000;
+  cursor:pointer;
+  box-shadow:0 0 15px rgba(0,255,255,.4);
+}
+
+.section-title{
+  margin-top:40px;
+  font-size:20px;
+  font-weight:700;
+  margin-bottom:15px;
+}
+
+.card-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+  gap:15px;
+}
+
+.card{
+  background:#121212;
+  padding:20px;
+  border-radius:16px;
+  text-align:center;
+  transition:.3s;
+  border:1px solid rgba(255,255,255,.1);
+}
+
+.card:hover{
+  transform:translateY(-5px);
+  box-shadow:0 0 20px rgba(0,255,255,.2);
+}
+
+.card span{
+  font-size:30px;
+  display:block;
+  margin-bottom:10px;
+}
+
+.card h4{
+  font-size:14px;
+  margin:0;
+}
+</style>
+
+<div class="hero">
+  <h1>Амьд Стрим Орчлон</h1>
+  <p>Hola Live бол стример төвтэй, token + бэлгийн эдийн засагт суурилсан амьд платформ.</p>
+  <button class="cta-btn" onclick="loadPage('live.html')">Стрим эхлүүлэх</button>
+</div>
+
+<div class="section-title">Онцлох хэсгүүд</div>
+
+<div class="card-grid">
+  <div class="card" onclick="loadPage('store.html')">
+    <span>🛒</span>
+    <h4>Дэлгүүр</h4>
+  </div>
+  <div class="card" onclick="loadPage('vip.html')">
+    <span>👑</span>
+    <h4>VIP өрөө</h4>
+  </div>
+  <div class="card" onclick="loadPage('invite.html')">
+    <span>💌</span>
+    <h4>Урилга</h4>
+  </div>
+  <div class="card" onclick="loadPage('analytics.html')">
+    <span>📊</span>
+    <h4>Аналитик</h4>
+  </div>
+</div>
+
+</div>
