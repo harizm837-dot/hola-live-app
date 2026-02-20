@@ -1,225 +1,247 @@
 <div class="store-container">
 <style>
-    .store-container {
-        padding: 20px;
-        max-width: 800px;
-        margin: 0 auto;
-        animation: fadeIn 0.5s ease;
+    :root {
+        --gold-glow: 0 0 20px rgba(255, 207, 64, 0.4);
+        --accent-glow: 0 0 25px rgba(125, 249, 255, 0.3);
     }
 
+    .store-container {
+        padding: 20px;
+        max-width: 900px;
+        margin: 0 auto;
+        animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 💎 WALLET HEADER */
     .store-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 30px;
-        background: var(--glass);
-        padding: 20px;
-        border-radius: 20px;
+        background: linear-gradient(135deg, var(--panel), #1a223a);
+        padding: 25px;
+        border-radius: 28px;
         border: 1px solid var(--border);
+        box-shadow: var(--accent-glow);
     }
-
-    .store-title h2 { font-family: 'Montserrat', sans-serif; margin: 0; font-size: 24px; }
-    .store-title p { font-size: 12px; color: var(--muted); margin: 0; }
 
     .user-wallet {
-        background: var(--accent-gradient);
+        background: linear-gradient(90deg, var(--accent), #00d2ff);
         color: #000;
-        padding: 10px 20px;
-        border-radius: 15px;
+        padding: 12px 25px;
+        border-radius: 20px;
         font-weight: 800;
-        box-shadow: 0 5px 15px var(--accent-glow);
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 10px 20px rgba(125, 249, 255, 0.3);
     }
 
-    /* Tabs */
+    /* 🔖 CATEGORY TABS */
     .store-tabs {
         display: flex;
-        gap: 10px;
-        margin-bottom: 20px;
+        gap: 12px;
+        margin-bottom: 25px;
     }
 
     .tab-btn {
-        padding: 10px 20px;
-        border-radius: 12px;
+        flex: 1;
+        padding: 14px;
+        border-radius: 18px;
         border: 1px solid var(--border);
         background: var(--glass);
         color: var(--muted);
+        font-weight: 700;
         cursor: pointer;
-        transition: 0.3s;
+        transition: all 0.3s ease;
     }
 
     .tab-btn.active {
         background: var(--accent);
         color: #000;
         border-color: var(--accent);
-        font-weight: 600;
+        box-shadow: 0 0 15px rgba(125, 249, 255, 0.4);
     }
 
-    /* Grid Items */
+    /* 🛍️ SHOP GRID */
     .shop-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
         gap: 20px;
     }
 
     .shop-card {
-        background: var(--glass);
+        background: var(--panel);
         border: 1px solid var(--border);
-        border-radius: 24px;
-        padding: 20px;
+        border-radius: 30px;
+        padding: 25px 20px;
         text-align: center;
-        transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         position: relative;
-        overflow: hidden;
     }
 
     .shop-card:hover {
-        transform: translateY(-8px);
+        transform: translateY(-10px) scale(1.02);
         border-color: var(--accent);
-        background: rgba(255, 255, 255, 0.05);
+        box-shadow: var(--accent-glow);
     }
 
-    .item-icon { font-size: 40px; margin-bottom: 15px; display: block; }
-
-    .item-name { font-weight: 700; font-size: 15px; margin-bottom: 8px; display: block; }
-
-    .item-price {
-        color: var(--accent);
-        font-weight: 800;
-        font-size: 14px;
+    .item-icon {
+        font-size: 50px;
         margin-bottom: 15px;
         display: block;
+        filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
     }
 
-    .buy-action {
+    .item-name { font-weight: 800; font-size: 16px; margin-bottom: 5px; color: #fff; }
+    .item-desc { font-size: 11px; color: var(--muted); margin-bottom: 15px; display: block; }
+
+    .item-price {
+        font-family: 'Montserrat';
+        color: var(--accent);
+        font-weight: 800;
+        font-size: 15px;
+        background: rgba(125, 249, 255, 0.1);
+        padding: 5px 12px;
+        border-radius: 10px;
+        display: inline-block;
+        margin-bottom: 20px;
+    }
+
+    .buy-btn {
         width: 100%;
-        padding: 10px;
-        border-radius: 12px;
+        padding: 12px;
+        border-radius: 15px;
         border: none;
-        background: rgba(255,255,255,0.1);
+        background: var(--glass);
         color: #fff;
-        font-weight: 600;
+        font-weight: 700;
         cursor: pointer;
         transition: 0.3s;
     }
 
-    .shop-card:hover .buy-action {
+    .shop-card:hover .buy-btn {
         background: var(--accent);
         color: #000;
     }
 
-    .vip-badge {
+    .vip-tag {
         position: absolute;
-        top: 10px;
-        right: 10px;
-        background: #ffcf40;
+        top: 15px;
+        right: 15px;
+        background: #ffd700;
         color: #000;
-        font-size: 9px;
-        padding: 2px 6px;
-        border-radius: 5px;
+        font-size: 10px;
+        padding: 4px 8px;
+        border-radius: 8px;
         font-weight: 900;
+        box-shadow: var(--gold-glow);
     }
 </style>
 
+
+
 <div class="store-header">
     <div class="store-title">
-        <h2>Дэлгүүр</h2>
-        <p>Токен цэнэглэх ба Бэлэг авах</p>
+        <h2 style="font-family: 'Montserrat';">Hola Market</h2>
+        <p style="color: var(--muted); font-size: 13px;">Эрх чөлөөгөө💎-оор ав</p>
     </div>
     <div class="user-wallet">
-        💎 <span id="displayTokens">0</span>
+        <span>💎</span> <span id="walletDisp">0</span>
     </div>
 </div>
 
 <div class="store-tabs">
-    <button class="tab-btn active" onclick="switchTab('tokens', this)">💎 Токен</button>
-    <button class="tab-btn" onclick="switchTab('gifts', this)">🎁 Бэлэг</button>
+    <button class="tab-btn active" onclick="changeTab('tokens', this)">💎 Цэнэглэх</button>
+    <button class="tab-btn" onclick="changeTab('gifts', this)">🎁 Бэлэг авах</button>
 </div>
 
-<div class="shop-grid" id="shopGrid">
+<div class="shop-grid" id="marketGrid">
     </div>
 
 <script>
-    // 📊 ECONOMY SYSTEM (SIMULATED)
-    const Economy = {
-        tokens: parseInt(localStorage.getItem('user_tokens')) || 500,
-        isVIP: localStorage.getItem('is_vip') === 'true',
-        
-        save() {
-            localStorage.setItem('user_tokens', this.tokens);
-            document.getElementById('displayTokens').innerText = this.tokens.toLocaleString();
-        },
-        
-        buy(price, title) {
-            if (this.tokens >= price) {
-                this.tokens -= price;
-                this.save();
-                alert(`Амжилттай: ${title} худалдаж авлаа!`);
-                return true;
-            }
-            alert("Токен хүрэлцэхгүй байна!");
-            return false;
-        }
+    const userState = {
+        tokens: parseInt(localStorage.getItem('hola_wallet')) || 1250,
+        isVIP: true // Тест хийх зорилгоор TRUE болгов
     };
 
-    const catalog = {
+    const shopData = {
         tokens: [
-            { name: "Starter Pack", amount: 100, price: 5000, icon: "💎", id: 't1' },
-            { name: "Value Pack", amount: 500, price: 20000, icon: "💰", id: 't2' },
-            { name: "Pro Pack", amount: 2000, price: 75000, icon: "🏆", id: 't3' }
+            { id: 't1', name: 'Starter Kit', amount: 100, price: 5000, icon: '💎', desc: 'Анхлан суралцагчдад' },
+            { id: 't2', name: 'Popular Pack', amount: 1000, price: 45000, icon: '🔥', desc: 'Хамгийн эрэлттэй' },
+            { id: 't3', name: 'Whale Stash', amount: 10000, price: 400000, icon: '🐋', desc: 'Топ хэрэглэгчдэд' }
         ],
         gifts: [
-            { name: "Сарнай", price: 10, icon: "🌹", id: 'g1' },
-            { name: "Машин", price: 500, icon: "🏎️", id: 'g2' },
-            { name: "Титэм", price: 1000, icon: "👑", id: 'g3' },
-            { name: "Пуужин", price: 5000, icon: "🚀", id: 'g4' }
+            { id: 'g1', name: 'Сарнай', price: 10, icon: '🌹', desc: 'Сэтгэлийн илэрхийлэл' },
+            { id: 'g2', name: 'Супер Машин', price: 2000, icon: '🏎️', desc: 'Стримэрт өгөх хамгийн том бэлэг' },
+            { id: 'g3', name: 'Сансрын хөлөг', price: 5000, icon: '🚀', desc: 'Стримийг сансарт гарга!' }
         ]
     };
 
-    function renderItems(type) {
-        const grid = document.getElementById('shopGrid');
+    function refreshUI() {
+        document.getElementById('walletDisp').innerText = userState.tokens.toLocaleString();
+        localStorage.setItem('hola_wallet', userState.tokens);
+    }
+
+    function renderMarket(category) {
+        const grid = document.getElementById('marketGrid');
         grid.innerHTML = '';
-        
-        catalog[type].forEach(item => {
-            const isToken = type === 'tokens';
-            const priceLabel = isToken ? `${item.price.toLocaleString()}₮` : `💎 ${item.price}`;
+
+        shopData[category].forEach(item => {
+            const isToken = category === 'tokens';
+            let finalPrice = item.price;
             
+            // VIP Хямдрал (Зөвхөн бэлэг дээр)
+            if(!isToken && userState.isVIP) finalPrice = Math.floor(item.price * 0.8);
+
             const card = document.createElement('div');
             card.className = 'shop-card';
             card.innerHTML = `
-                ${(Economy.isVIP && !isToken) ? '<span class="vip-badge">-20% VIP</span>' : ''}
+                ${(!isToken && userState.isVIP) ? '<span class="vip-tag">VIP -20%</span>' : ''}
                 <span class="item-icon">${item.icon}</span>
                 <span class="item-name">${item.name}</span>
-                <span class="item-price">${priceLabel}</span>
-                <button class="buy-action" onclick="handlePurchase('${type}', '${item.id}')">
-                    ${isToken ? 'Цэнэглэх' : 'Худалдан авах'}
+                <span class="item-desc">${item.desc}</span>
+                <span class="item-price">${isToken ? finalPrice.toLocaleString()+'₮' : '💎 '+finalPrice}</span>
+                <button class="buy-btn" onclick="processOrder('${category}', '${item.id}')">
+                    ${isToken ? 'Цэнэглэх' : 'Авах'}
                 </button>
             `;
             grid.appendChild(card);
         });
     }
 
-    function switchTab(type, btn) {
+    function changeTab(cat, btn) {
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        renderItems(type);
+        renderMarket(cat);
     }
 
-    function handlePurchase(type, id) {
-        const item = catalog[type].find(i => i.id === id);
-        if (type === 'tokens') {
-            // Бодит төлбөрийн систем байхгүй тул шууд нэмэв
-            Economy.tokens += item.amount;
-            Economy.save();
-            alert(`${item.amount} токен нэмэгдлээ!`);
+    function processOrder(cat, id) {
+        const item = shopData[cat].find(i => i.id === id);
+        
+        if(cat === 'tokens') {
+            userState.tokens += item.amount;
+            alert(`Амжилттай: ${item.amount}💎 нэмэгдлээ!`);
         } else {
-            let price = item.price;
-            if (Economy.isVIP) price = Math.floor(price * 0.8);
-            Economy.buy(price, item.name);
+            let price = userState.isVIP ? Math.floor(item.price * 0.8) : item.price;
+            if(userState.tokens >= price) {
+                userState.tokens -= price;
+                alert(`Баяр хүргэе! ${item.name} авлаа.`);
+            } else {
+                alert('Токен хүрэлцэхгүй байна. Цэнэглэнэ үү!');
+            }
         }
+        refreshUI();
     }
 
     // Init
-    Economy.save();
-    renderItems('tokens');
+    refreshUI();
+    renderMarket('tokens');
 </script>
 </div>
