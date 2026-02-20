@@ -1,291 +1,356 @@
-<div class="live-container">
-<style>
-    .live-container {
-        position: relative;
-        height: 100vh;
-        width: 100%;
-        background: #000;
-        color: #fff;
-        overflow: hidden;
-    }
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hola Live · Streamer Dashboard</title>
 
-    /* 🎥 VIDEO PLACEHOLDER WITH GLOW */
-    .live-video {
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(circle at center, #1a1a2e 0%, #000 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1;
-    }
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
 
-    .video-status {
-        text-align: center;
-        opacity: 0.5;
-        animation: pulseStatus 2s infinite;
-    }
+    <style>
+        :root {
+            --bg: #0b0f1a;
+            --panel: #12182b;
+            --glass: rgba(255, 255, 255, 0.08);
+            --border: rgba(255, 255, 255, 0.15);
+            --text: #eaf6ff;
+            --muted: #9bb0c9;
+            --accent: #7df9ff;
+            --danger: #ff3344;
+            --ok: #4dff88;
+            --gold: #ffcf40;
+        }
 
-    @keyframes pulseStatus {
-        0%, 100% { opacity: 0.3; transform: scale(1); }
-        50% { opacity: 0.6; transform: scale(1.05); }
-    }
+        * { box-sizing: border-box; }
 
-    /* 顶部: Streamer Info */
-    .live-header {
-        position: absolute;
-        top: 20px;
-        left: 20px;
-        right: 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        z-index: 10;
-    }
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at top, #141b33, #05070f 65%);
+            color: var(--text);
+            min-height: 100vh;
+            overflow: hidden;
+        }
 
-    .streamer-profile {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        background: rgba(0, 0, 0, 0.4);
-        padding: 6px 15px 6px 6px;
-        border-radius: 40px;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
+        .app {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            height: 100vh;
+        }
 
-    .avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background: var(--accent-gradient);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        border: 2px solid var(--accent);
-    }
+        /* 🚪 SIDEBAR */
+        .sidebar {
+            background: linear-gradient(180deg, #0d1224, #070a14);
+            padding: 25px;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
 
-    .streamer-details h4 { font-size: 14px; margin: 0; }
-    .streamer-details span { font-size: 11px; color: #4dff88; font-weight: bold; }
+        .brand {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--accent), #ff4fd8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
 
-    /* 💎 WALLET & VIEWERS */
-    .live-stats {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        gap: 10px;
-    }
+        .menu button {
+            width: 100%;
+            padding: 14px 18px;
+            margin-bottom: 12px;
+            border-radius: 18px;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            color: var(--text);
+            text-align: left;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-    .stat-pill {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        padding: 6px 16px;
-        border-radius: 20px;
-        font-size: 13px;
-        font-weight: 600;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
+        .menu button:hover {
+            background: rgba(125, 249, 255, 0.1);
+            transform: translateX(8px);
+            border-color: var(--accent);
+        }
 
-    .wallet-pill {
-        background: rgba(0, 234, 255, 0.15);
-        border-color: rgba(0, 234, 255, 0.4);
-        color: var(--accent);
-        box-shadow: 0 0 15px rgba(0, 234, 255, 0.2);
-    }
+        .menu button.active {
+            background: var(--accent);
+            color: #000;
+            border-color: var(--accent);
+        }
 
-    /* 💬 CHAT AREA */
-    .chat-box {
-        position: absolute;
-        bottom: 100px;
-        left: 20px;
-        width: 280px;
-        max-height: 200px;
-        overflow-y: hidden;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        mask-image: linear-gradient(to top, black 80%, transparent 100%);
-        z-index: 5;
-    }
+        /* 📺 MAIN PANEL */
+        .main { display: flex; flex-direction: column; height: 100vh; }
 
-    .chat-msg {
-        background: rgba(0, 0, 0, 0.3);
-        padding: 8px 12px;
-        border-radius: 12px;
-        font-size: 13px;
-        animation: slideIn 0.3s ease-out;
-        border-left: 3px solid var(--accent);
-    }
+        .header {
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(11, 15, 26, 0.5);
+            backdrop-filter: blur(10px);
+        }
 
-    @keyframes slideIn {
-        from { opacity: 0; transform: translateX(-20px); }
-        to { opacity: 1; transform: translateX(0); }
-    }
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 51, 68, 0.1);
+            padding: 6px 15px;
+            border-radius: 20px;
+            color: var(--danger);
+            font-weight: 800;
+            font-size: 12px;
+            border: 1px solid var(--danger);
+        }
 
-    /* 🕹️ ACTIONS */
-    .side-actions {
-        position: absolute;
-        right: 20px;
-        bottom: 100px;
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        z-index: 10;
-    }
+        .dot { width: 8px; height: 8px; background: var(--danger); border-radius: 50%; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
 
-    .btn-action {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        border: none;
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        color: white;
-        font-size: 20px;
-        cursor: pointer;
-        transition: 0.3s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
+        /* 🏗️ CONTENT GRID */
+        .content {
+            flex: 1;
+            padding: 25px;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 25px;
+            overflow: hidden;
+        }
 
-    .btn-action:hover {
-        transform: scale(1.1) rotate(10deg);
-        background: var(--accent);
-        color: #000;
-    }
+        .stream-section { display: flex; flex-direction: column; gap: 20px; }
 
-    .btn-gift {
-        background: linear-gradient(45deg, #ff00c8, #ff4f5e);
-        box-shadow: 0 0 20px rgba(255, 0, 200, 0.4);
-    }
+        .video-box {
+            flex: 1;
+            background: #000;
+            border-radius: 30px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            background-image: url('https://dummyimage.com/1280x720/101522/ffffff&text=CAMERA+READY');
+            background-size: cover;
+            background-position: center;
+        }
 
-    /* ANIMATIONS */
-    .heart-float {
-        position: absolute;
-        bottom: 100px;
-        right: 35px;
-        font-size: 24px;
-        pointer-events: none;
-        animation: heartFloat 2s ease-out forwards;
-        z-index: 20;
-    }
+        /* 📊 STATS BOXES */
+        .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .stat-card {
+            background: var(--panel);
+            padding: 15px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+        .stat-card small { color: var(--muted); font-size: 11px; text-transform: uppercase; }
+        .stat-card div { font-size: 20px; font-weight: 800; margin-top: 5px; }
 
-    @keyframes heartFloat {
-        0% { transform: translateY(0) scale(1); opacity: 1; }
-        100% { transform: translateY(-300px) translateX(var(--random-x)) scale(1.5); opacity: 0; }
-    }
+        /* 💬 CHAT PANEL */
+        .chat-panel {
+            background: var(--panel);
+            border-radius: 30px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
 
-    .gift-notice {
-        position: absolute;
-        top: 40%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: var(--accent-gradient);
-        padding: 15px 30px;
-        border-radius: 50px;
-        color: #000;
-        font-weight: 800;
-        font-size: 20px;
-        z-index: 30;
-        animation: giftPop 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-    }
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
 
-    @keyframes giftPop {
-        0% { opacity: 0; transform: translate(-50%, -20%) scale(0.5); }
-        20% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
-        80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        100% { opacity: 0; transform: translate(-50%, -80%) scale(0.8); }
-    }
-</style>
+        .msg { font-size: 14px; line-height: 1.5; }
+        .msg b { color: var(--accent); margin-right: 8px; }
 
-<div class="live-video">
-    <div class="video-status">
-        <div style="font-size: 50px;">📡</div>
-        <p>Стример түр завсарласан байна...</p>
-    </div>
-</div>
+        .chat-input-area {
+            padding: 15px;
+            background: rgba(0,0,0,0.2);
+            display: flex;
+            gap: 10px;
+        }
 
-<div class="live-header">
-    <div class="streamer-profile">
-        <div class="avatar">H</div>
-        <div class="streamer-details">
-            <h4>@Hola_Official</h4>
-            <span>● 1,402 үзэж байна</span>
+        .chat-input-area input {
+            flex: 1;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 12px 15px;
+            border-radius: 12px;
+            color: #fff;
+            outline: none;
+        }
+
+        .send-btn {
+            background: var(--accent);
+            color: #000;
+            border: none;
+            width: 45px;
+            border-radius: 12px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        /* 🎁 GIFT TOAST */
+        #giftToast {
+            position: fixed;
+            top: 90px;
+            right: 400px;
+            background: var(--gold);
+            color: #000;
+            padding: 15px 25px;
+            border-radius: 20px;
+            font-weight: 800;
+            display: none;
+            animation: slideIn 0.5s ease-out;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(255, 207, 64, 0.4);
+        }
+
+        @keyframes slideIn { from { transform: translateX(50px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    </style>
+</head>
+<body>
+
+<div class="app">
+    <aside class="sidebar">
+        <div class="brand">HOLA LIVE</div>
+        <nav class="menu">
+            <button onclick="location.href='index.html'">🏠 Нүүр хуудас</button>
+            <button class="active">🎥 Stream Dashboard</button>
+            <button onclick="location.href='store.html'">💎 Дэлгүүр</button>
+            <button onclick="location.href='profile.html'">👤 Профайл</button>
+            <button onclick="location.href='moderator.html'">🛡 Модератор</button>
+        </nav>
+    </aside>
+
+    <main class="main">
+        <header class="header">
+            <div style="font-weight: 700;">Стримэр: <span id="streamerName" style="color: var(--accent);">User</span></div>
+            <div class="live-indicator">
+                <div class="dot"></div>
+                ШУУД ДАМЖУУЛЖ БАЙНА
+            </div>
+        </header>
+
+        <div class="content">
+            <div class="stream-section">
+                <div class="video-box"></div>
+                
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <small>Үзэгчид</small>
+                        <div id="vCount">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <small>Токен</small>
+                        <div id="tCount" style="color: var(--ok);">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <small>Зэрэглэл</small>
+                        <div style="color: var(--gold);">TOP 10</div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <button class="send-btn" style="flex: 1; height: 50px;" onclick="alert('Стрим зогслоо')">Stop Stream</button>
+                    <button class="send-btn" style="flex: 1; height: 50px; background: var(--glass); color: #fff; border: 1px solid var(--border);">Share Link</button>
+                </div>
+            </div>
+
+            <div class="chat-panel">
+                <div style="padding: 15px 20px; border-bottom: 1px solid var(--border); font-weight: 700; font-size: 14px;">Чат</div>
+                <div class="chat-messages" id="chatLogs">
+                    <div class="msg"><b>Систем:</b> Стрим амжилттай эхэллээ.</div>
+                </div>
+                <form class="chat-input-area" id="chatForm">
+                    <input type="text" id="chatInput" placeholder="Мессеж бичих..." autocomplete="off">
+                    <button type="submit" class="send-btn">></button>
+                </form>
+            </div>
         </div>
-    </div>
-
-    <div class="live-stats">
-        <div class="stat-pill wallet-pill">💎 <span id="walletAmt">0</span></div>
-        <div class="stat-pill">🔥 24.5K</div>
-    </div>
+    </main>
 </div>
 
-<div class="chat-box" id="chatBox">
-    <div class="chat-msg"><b>User12:</b> Хөөе, гоё харагдаж байна! 😍</div>
-    <div class="chat-msg"><b>Bolt:</b> Сайн байна уу? 🔥</div>
-    <div class="chat-msg"><b>Saraa:</b> Өнөөдөр юу тоглох вэ?</div>
-</div>
-
-<div class="side-actions">
-    <button class="btn-action btn-gift" onclick="sendGift()">🎁</button>
-    <button class="btn-action" onclick="spawnHeart()">❤️</button>
-    <button class="btn-action" onclick="addChatMessage()">💬</button>
-    <button class="btn-action" onclick="navigateTo('home.html')">🚪</button>
-</div>
+<div id="giftToast">🎁 <span id="giftUser"></span>: <span id="giftName"></span></div>
 
 <script>
-    let currentWallet = 0;
-
-    // 🎁 GIFT LOGIC
-    function sendGift() {
-        const notice = document.createElement('div');
-        notice.className = 'gift-notice';
-        notice.innerHTML = '🎁 ХОТ БЭЛЭГ +100';
-        document.querySelector('.live-container').appendChild(notice);
-        
-        currentWallet += 100;
-        document.getElementById('walletAmt').innerText = currentWallet;
-
-        setTimeout(() => notice.remove(), 1200);
-    }
-
-    // ❤️ HEART LOGIC
-    function spawnHeart() {
-        const heart = document.createElement('div');
-        heart.className = 'heart-float';
-        heart.innerHTML = ['❤️','💖','✨','🔥'][Math.floor(Math.random()*4)];
-        heart.style.setProperty('--random-x', (Math.random() * 100 - 50) + 'px');
-        document.querySelector('.live-container').appendChild(heart);
-        
-        setTimeout(() => heart.remove(), 2000);
-    }
+    // 📊 DATA STATE
+    const state = {
+        viewers: 142,
+        tokens: parseInt(localStorage.getItem('hola_wallet')) || 0,
+        name: localStorage.getItem('hola_username') || "Streamer_1"
+    };
 
     // 💬 CHAT LOGIC
-    const messages = [
-        "Амжилт хүсье! 🚀",
-        "Hola Live хамгийн шилдэг нь! 💎",
-        "Бэлэг илгээлээ, шалгаарай!",
-        "Стрим үнэхээр гоё байнаа ✨"
-    ];
+    const chatForm = document.getElementById('chatForm');
+    const chatInput = document.getElementById('chatInput');
+    const chatLogs = document.getElementById('chatLogs');
 
-    function addChatMessage() {
-        const box = document.getElementById('chatBox');
+    chatForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const text = chatInput.value.trim();
+        if(!text) return;
+
         const msg = document.createElement('div');
-        msg.className = 'chat-msg';
-        msg.innerHTML = `<b>Guest:</b> ${messages[Math.floor(Math.random()*messages.length)]}`;
-        box.appendChild(msg);
+        msg.className = 'msg';
+        msg.innerHTML = `<b>${state.name}:</b> ${text}`;
+        chatLogs.appendChild(msg);
+        chatLogs.scrollTop = chatLogs.scrollHeight;
+        chatInput.value = '';
+    });
+
+    // 🎁 SIMULATED GIFT ALERTS
+    function triggerGift(user, gift) {
+        const toast = document.getElementById('giftToast');
+        document.getElementById('giftUser').innerText = user;
+        document.getElementById('giftName').innerText = gift;
         
-        // Auto-scroll to bottom
-        box.scrollTop = box.scrollHeight;
-        
-        // Keep only last 5 messages
-        if(box.children.length > 6) box.children[0].remove();
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 4000);
+
+        // Add to chat
+        const msg = document.createElement('div');
+        msg.className = 'msg';
+        msg.style.color = 'var(--gold)';
+        msg.innerHTML = `🌟 <b>${user}</b> ${gift} илгээлээ!`;
+        chatLogs.appendChild(msg);
+        chatLogs.scrollTop = chatLogs.scrollHeight;
     }
 
-    // Автоматаар чат нэмэх (Simulation)
-    setInterval(addChatMessage, 4000);
+    // 🔄 UI UPDATES
+    function updateMetrics() {
+        document.getElementById('vCount').innerText = state.viewers.toLocaleString();
+        document.getElementById('tCount').innerText = state.tokens.toLocaleString();
+        document.getElementById('streamerName').innerText = state.name;
+    }
+
+    // SIMULATION
+    setInterval(() => {
+        state.viewers += Math.floor(Math.random() * 5) - 2;
+        updateMetrics();
+    }, 3000);
+
+    setTimeout(() => { triggerGift('Zorig_88', 'Super Car 🏎️'); }, 5000);
+    setTimeout(() => { triggerGift('Anu_B', 'Red Rose 🌹'); }, 12000);
+
+    // Init
+    updateMetrics();
 </script>
-</div>
+
+</body>
+</html>
