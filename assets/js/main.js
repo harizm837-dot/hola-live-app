@@ -1,16 +1,20 @@
-import { initLivePage } from "./pages/live.page.js";
+document.addEventListener('DOMContentLoaded', () => {
+  // Initialize UI
+  Economy.updateUI();
+  RoleEngine.setRole(RoleEngine.getRole());
 
-function detectPage(){
-
-  const page = window.location.hash.replace("#","");
-
-  if(page === "live"){
-    setTimeout(() => {
-      initLivePage();
-    }, 50);
+  if(RoleEngine.is(RoleEngine.ROLES.STREAMER)){
+    StreamerEngine.toggleLive(true);
   }
 
-}
+  if(VIP.isVIP()){
+    document.getElementById('vipBadge').innerText = '👑 VIP ACTIVE';
+  }
 
-window.addEventListener("hashchange", detectPage);
-window.addEventListener("load", detectPage);
+  // Service worker
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('service-worker.js')
+      .then(()=>console.log('SW Registered'))
+      .catch(err=>console.error(err));
+  }
+});
