@@ -1,225 +1,291 @@
 <div class="live-container">
-
 <style>
-.live-container{
-  position:relative;
-  height:100vh;
-  width:100%;
-  overflow:hidden;
-  background:#000;
-  font-family:'Inter',sans-serif;
-}
+    .live-container {
+        position: relative;
+        height: 100vh;
+        width: 100%;
+        background: #000;
+        color: #fff;
+        overflow: hidden;
+    }
 
-/* ===== VIDEO BACKGROUND ===== */
-.live-video{
-  position:absolute;
-  inset:0;
-  background:radial-gradient(circle at center,#111 0%,#000 70%);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#222;
-  font-size:22px;
-}
+    /* 🎥 VIDEO PLACEHOLDER WITH GLOW */
+    .live-video {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at center, #1a1a2e 0%, #000 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1;
+    }
 
-/* ===== TOP OVERLAY ===== */
-.live-top-bar{
-  position:absolute;
-  top:0;
-  left:0;
-  right:0;
-  padding:12px 15px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:linear-gradient(to bottom,rgba(0,0,0,.8),transparent);
-  z-index:10;
-}
+    .video-status {
+        text-align: center;
+        opacity: 0.5;
+        animation: pulseStatus 2s infinite;
+    }
 
-.live-badge{
-  background:linear-gradient(90deg,#ff004c,#ff7300);
-  padding:5px 12px;
-  border-radius:20px;
-  font-size:12px;
-  font-weight:700;
-  box-shadow:0 0 10px #ff004c;
-}
+    @keyframes pulseStatus {
+        0%, 100% { opacity: 0.3; transform: scale(1); }
+        50% { opacity: 0.6; transform: scale(1.05); }
+    }
 
-.viewer-box{
-  font-size:13px;
-  color:#fff;
-}
+    /* 顶部: Streamer Info */
+    .live-header {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        right: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        z-index: 10;
+    }
 
-/* ===== WALLET ===== */
-.wallet-box{
-  position:absolute;
-  top:60px;
-  right:15px;
-  background:rgba(0,0,0,.6);
-  backdrop-filter:blur(10px);
-  padding:8px 14px;
-  border-radius:20px;
-  font-size:14px;
-  border:1px solid rgba(0,255,255,.3);
-  box-shadow:0 0 12px rgba(0,255,255,.3);
-}
+    .streamer-profile {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(0, 0, 0, 0.4);
+        padding: 6px 15px 6px 6px;
+        border-radius: 40px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
 
-/* ===== RIGHT SIDE ACTIONS ===== */
-.live-actions{
-  position:absolute;
-  right:10px;
-  bottom:140px;
-  display:flex;
-  flex-direction:column;
-  gap:18px;
-  z-index:20;
-}
+    .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--accent-gradient);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        border: 2px solid var(--accent);
+    }
 
-.action-btn{
-  width:55px;
-  height:55px;
-  border-radius:50%;
-  background:rgba(0,0,0,.6);
-  backdrop-filter:blur(8px);
-  border:1px solid rgba(0,255,255,.4);
-  color:#fff;
-  font-size:22px;
-  cursor:pointer;
-  transition:.2s;
-}
+    .streamer-details h4 { font-size: 14px; margin: 0; }
+    .streamer-details span { font-size: 11px; color: #4dff88; font-weight: bold; }
 
-.action-btn:hover{
-  transform:scale(1.1);
-  box-shadow:0 0 15px #00f0ff;
-}
+    /* 💎 WALLET & VIEWERS */
+    .live-stats {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 10px;
+    }
 
-/* ===== BOTTOM INFO ===== */
-.stream-info{
-  position:absolute;
-  bottom:70px;
-  left:15px;
-  right:90px;
-  color:#fff;
-}
+    .stat-pill {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
 
-.stream-info h3{
-  margin:0;
-  font-size:16px;
-  font-weight:700;
-}
+    .wallet-pill {
+        background: rgba(0, 234, 255, 0.15);
+        border-color: rgba(0, 234, 255, 0.4);
+        color: var(--accent);
+        box-shadow: 0 0 15px rgba(0, 234, 255, 0.2);
+    }
 
-.stream-info p{
-  font-size:13px;
-  color:#aaa;
-}
+    /* 💬 CHAT AREA */
+    .chat-box {
+        position: absolute;
+        bottom: 100px;
+        left: 20px;
+        width: 280px;
+        max-height: 200px;
+        overflow-y: hidden;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        mask-image: linear-gradient(to top, black 80%, transparent 100%);
+        z-index: 5;
+    }
 
-/* ===== FLOATING HEART ===== */
-.heart{
-  position:absolute;
-  bottom:100px;
-  font-size:20px;
-  animation:floatUp 2s linear forwards;
-}
+    .chat-msg {
+        background: rgba(0, 0, 0, 0.3);
+        padding: 8px 12px;
+        border-radius: 12px;
+        font-size: 13px;
+        animation: slideIn 0.3s ease-out;
+        border-left: 3px solid var(--accent);
+    }
 
-@keyframes floatUp{
-  0%{transform:translateY(0);opacity:1;}
-  100%{transform:translateY(-250px);opacity:0;}
-}
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateX(-20px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
 
-/* ===== GIFT BURST ===== */
-.gift-pop{
-  position:absolute;
-  bottom:200px;
-  left:50%;
-  transform:translateX(-50%);
-  font-size:24px;
-  animation:popGift 1.5s ease-out forwards;
-  color:#00f0ff;
-  text-shadow:0 0 10px #00f0ff;
-}
+    /* 🕹️ ACTIONS */
+    .side-actions {
+        position: absolute;
+        right: 20px;
+        bottom: 100px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        z-index: 10;
+    }
 
-@keyframes popGift{
-  0%{transform:translateX(-50%) scale(.5);opacity:0;}
-  50%{transform:translateX(-50%) scale(1.2);opacity:1;}
-  100%{transform:translateX(-50%) scale(1);opacity:0;}
-}
+    .btn-action {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        border: none;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        color: white;
+        font-size: 20px;
+        cursor: pointer;
+        transition: 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-action:hover {
+        transform: scale(1.1) rotate(10deg);
+        background: var(--accent);
+        color: #000;
+    }
+
+    .btn-gift {
+        background: linear-gradient(45deg, #ff00c8, #ff4f5e);
+        box-shadow: 0 0 20px rgba(255, 0, 200, 0.4);
+    }
+
+    /* ANIMATIONS */
+    .heart-float {
+        position: absolute;
+        bottom: 100px;
+        right: 35px;
+        font-size: 24px;
+        pointer-events: none;
+        animation: heartFloat 2s ease-out forwards;
+        z-index: 20;
+    }
+
+    @keyframes heartFloat {
+        0% { transform: translateY(0) scale(1); opacity: 1; }
+        100% { transform: translateY(-300px) translateX(var(--random-x)) scale(1.5); opacity: 0; }
+    }
+
+    .gift-notice {
+        position: absolute;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: var(--accent-gradient);
+        padding: 15px 30px;
+        border-radius: 50px;
+        color: #000;
+        font-weight: 800;
+        font-size: 20px;
+        z-index: 30;
+        animation: giftPop 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes giftPop {
+        0% { opacity: 0; transform: translate(-50%, -20%) scale(0.5); }
+        20% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+        80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        100% { opacity: 0; transform: translate(-50%, -80%) scale(0.8); }
+    }
 </style>
 
-<!-- VIDEO -->
 <div class="live-video">
-  🎥 LIVE STREAM
+    <div class="video-status">
+        <div style="font-size: 50px;">📡</div>
+        <p>Стример түр завсарласан байна...</p>
+    </div>
 </div>
 
-<!-- TOP -->
-<div class="live-top-bar">
-  <div class="live-badge">LIVE</div>
-  <div class="viewer-box">👁 <span id="viewerCount">245</span></div>
+<div class="live-header">
+    <div class="streamer-profile">
+        <div class="avatar">H</div>
+        <div class="streamer-details">
+            <h4>@Hola_Official</h4>
+            <span>● 1,402 үзэж байна</span>
+        </div>
+    </div>
+
+    <div class="live-stats">
+        <div class="stat-pill wallet-pill">💎 <span id="walletAmt">0</span></div>
+        <div class="stat-pill">🔥 24.5K</div>
+    </div>
 </div>
 
-<!-- WALLET -->
-<div class="wallet-box">
-  💎 <span id="walletCounter">0</span>
+<div class="chat-box" id="chatBox">
+    <div class="chat-msg"><b>User12:</b> Хөөе, гоё харагдаж байна! 😍</div>
+    <div class="chat-msg"><b>Bolt:</b> Сайн байна уу? 🔥</div>
+    <div class="chat-msg"><b>Saraa:</b> Өнөөдөр юу тоглох вэ?</div>
 </div>
 
-<!-- RIGHT ACTIONS -->
-<div class="live-actions">
-  <button class="action-btn" onclick="sendHeart()">❤️</button>
-  <button class="action-btn" onclick="sendGift()">🎁</button>
-  <button class="action-btn" onclick="alert('Share')">📤</button>
-  <button class="action-btn" onclick="loadPage('analytics.html')">📊</button>
-</div>
-
-<!-- STREAM INFO -->
-<div class="stream-info">
-  <h3>@StreamerName</h3>
-  <p>Cyberpunk Night Session 🚀 #hola</p>
+<div class="side-actions">
+    <button class="btn-action btn-gift" onclick="sendGift()">🎁</button>
+    <button class="btn-action" onclick="spawnHeart()">❤️</button>
+    <button class="btn-action" onclick="addChatMessage()">💬</button>
+    <button class="btn-action" onclick="navigateTo('home.html')">🚪</button>
 </div>
 
 <script>
-let wallet = 0;
+    let currentWallet = 0;
 
-/* ===== ANIMATED WALLET ===== */
-function animateWallet(newAmount){
-  const el=document.getElementById('walletCounter');
-  let start=wallet;
-  let end=newAmount;
-  let duration=600;
-  let startTime=null;
+    // 🎁 GIFT LOGIC
+    function sendGift() {
+        const notice = document.createElement('div');
+        notice.className = 'gift-notice';
+        notice.innerHTML = '🎁 ХОТ БЭЛЭГ +100';
+        document.querySelector('.live-container').appendChild(notice);
+        
+        currentWallet += 100;
+        document.getElementById('walletAmt').innerText = currentWallet;
 
-  function update(timestamp){
-    if(!startTime) startTime=timestamp;
-    let progress=timestamp-startTime;
-    let percent=Math.min(progress/duration,1);
-    let value=Math.floor(start+(end-start)*percent);
-    el.innerText=value;
-    if(percent<1){
-      requestAnimationFrame(update);
-    }else{
-      wallet=end;
+        setTimeout(() => notice.remove(), 1200);
     }
-  }
-  requestAnimationFrame(update);
-}
 
-/* ===== HEART ===== */
-function sendHeart(){
-  const heart=document.createElement("div");
-  heart.className="heart";
-  heart.innerText="❤️";
-  heart.style.left=Math.random()*80+"%";
-  document.querySelector('.live-container').appendChild(heart);
-  setTimeout(()=>heart.remove(),2000);
-}
+    // ❤️ HEART LOGIC
+    function spawnHeart() {
+        const heart = document.createElement('div');
+        heart.className = 'heart-float';
+        heart.innerHTML = ['❤️','💖','✨','🔥'][Math.floor(Math.random()*4)];
+        heart.style.setProperty('--random-x', (Math.random() * 100 - 50) + 'px');
+        document.querySelector('.live-container').appendChild(heart);
+        
+        setTimeout(() => heart.remove(), 2000);
+    }
 
-/* ===== GIFT ===== */
-function sendGift(){
-  const gift=document.createElement("div");
-  gift.className="gift-pop";
-  gift.innerText="🎁 +50";
-  document.querySelector('.live-container').appendChild(gift);
-  animateWallet(wallet+50);
-  setTimeout(()=>gift.remove(),1500);
-}
+    // 💬 CHAT LOGIC
+    const messages = [
+        "Амжилт хүсье! 🚀",
+        "Hola Live хамгийн шилдэг нь! 💎",
+        "Бэлэг илгээлээ, шалгаарай!",
+        "Стрим үнэхээр гоё байнаа ✨"
+    ];
+
+    function addChatMessage() {
+        const box = document.getElementById('chatBox');
+        const msg = document.createElement('div');
+        msg.className = 'chat-msg';
+        msg.innerHTML = `<b>Guest:</b> ${messages[Math.floor(Math.random()*messages.length)]}`;
+        box.appendChild(msg);
+        
+        // Auto-scroll to bottom
+        box.scrollTop = box.scrollHeight;
+        
+        // Keep only last 5 messages
+        if(box.children.length > 6) box.children[0].remove();
+    }
+
+    // Автоматаар чат нэмэх (Simulation)
+    setInterval(addChatMessage, 4000);
 </script>
-
 </div>
