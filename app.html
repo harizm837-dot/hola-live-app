@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hola Live · Dashboard</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#00eaff">
+    <link rel="apple-touch-icon" href="assets/img/logo-192.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #0b0f1a;
+            --panel: #12182b;
+            --glass: rgba(255, 255, 255, 0.08);
+            --border: rgba(255, 255, 255, 0.15);
+            --text: #eaf6ff;
+            --muted: #9bb0c9;
+            --accent: #7df9ff;
+            --gold: #ffcf40;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at top, #141b33, #05070f 65%);
+            color: var(--text);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            height: 100vh;
+        }
+
+        /* 🚪 GLOBAL SIDEBAR */
+        .sidebar {
+            background: linear-gradient(180deg, #0d1224, #070a14);
+            padding: 25px;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .brand {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--accent), #ff4fd8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 25px;
+        }
+
+        .nav-menu { display: flex; flex-direction: column; gap: 10px; }
+        
+        .nav-item {
+            padding: 14px 18px;
+            border-radius: 16px;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-item:hover {
+            background: rgba(125, 249, 255, 0.1);
+            border-color: var(--accent);
+            transform: translateX(5px);
+        }
+
+        .nav-item.active {
+            background: var(--accent);
+            color: #000;
+            border-color: var(--accent);
+        }
+
+        .nav-item.vip-link { border-color: var(--gold); color: var(--gold); }
+        .nav-item.vip-link:hover { background: rgba(255, 207, 64, 0.1); }
+
+        /* 🖥️ MAIN CONTENT AREA */
+        .main-view {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .top-bar {
+            height: 70px;
+            padding: 0 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            background: rgba(11, 15, 26, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        .user-meta {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .balance-pill {
+            background: var(--glass);
+            padding: 8px 16px;
+            border-radius: 99px;
+            border: 1px solid var(--border);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-badge {
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+
+        /* 🖼️ IFRAME VIEWPORT (Салбар хуудсуудыг энд ачаална) */
+        .view-frame {
+            flex: 1;
+            border: none;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <aside class="sidebar">
+        <div class="brand">HOLA LIVE</div>
+        <nav class="nav-menu">
+            <a href="index.html" class="nav-item active" target="viewFrame" onclick="updateActive(this)">🏠 Нүүр</a>
+            <a href="streamer.html" class="nav-item" target="viewFrame" onclick="updateActive(this)">🎥 Streamer</a>
+            <a href="vip.html" class="nav-item vip-link" target="viewFrame" onclick="updateActive(this)">👑 VIP Room</a>
+            <a href="store.html" class="nav-item" target="viewFrame" onclick="updateActive(this)">💎 Дэлгүүр</a>
+            <a href="profile.html" class="nav-item" target="viewFrame" onclick="updateActive(this)">👤 Профайл</a>
+            <a href="moderator.html" class="nav-item" target="viewFrame" onclick="updateActive(this)">🛡 Модератор</a>
+        </nav>
+    </aside>
+
+    <main class="main-view">
+        <header class="top-bar">
+            <div id="viewTitle" style="font-weight: 800; font-size: 18px;">Үндсэн хуудас</div>
+            
+            <div class="user-meta">
+                <div id="vipTag" class="status-badge" style="display:none; background:var(--gold); color:#000;">VIP Member</div>
+                <div class="balance-pill">
+                    <span>💎</span> <span id="globalWallet">0</span>
+                </div>
+                <div style="font-weight: 600;" id="globalUser">Username</div>
+            </div>
+        </header>
+
+        <iframe name="viewFrame" src="index.html" class="view-frame" id="mainIframe"></iframe>
+    </main>
+</div>
+
+<script>
+    // 📊 GLOBAL DATA SYNC
+    function syncAppData() {
+        const wallet = localStorage.getItem('hola_wallet') || "0";
+        const username = localStorage.getItem('hola_username') || "Хэрэглэгч";
+        const isVIP = localStorage.getItem('is_vip') === 'true';
+
+        document.getElementById('globalWallet').innerText = parseInt(wallet).toLocaleString();
+        document.getElementById('globalUser').innerText = username;
+        document.getElementById('vipTag').style.display = isVIP ? 'block' : 'none';
+    }
+
+    // 🔗 UI NAVIGATION LOGIC
+    function updateActive(el) {
+        document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+        el.classList.add('active');
+        document.getElementById('viewTitle').innerText = el.innerText.replace(/[^\w\sа-яөү]/gi, '').trim();
+    }
+
+    // 🛠️ SERVICE WORKER REGISTRATION (PWA)
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('PWA: Service Worker бүртгэгдлээ'))
+                .catch(err => console.log('PWA: Алдаа гарлаа', err));
+        });
+    }
+
+    // Хуудас доторх өөрчлөлтийг 2 секунд тутамд шалгаж синхрон хийх
+    setInterval(syncAppData, 2000);
+    window.onload = syncAppData;
+
+    // Iframe доторх хуудас өөрчлөгдөхөд гарчиг шинэчлэх
+    document.getElementById('mainIframe').onload = function() {
+        syncAppData();
+    };
+</script>
+
+</body>
+</html>
