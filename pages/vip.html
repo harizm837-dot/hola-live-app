@@ -3,187 +3,283 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hola Live - VIP Room</title>
+<title>Hola Live · VIP Room Access</title>
 
-<link rel="stylesheet" href="../assets/css/reset.css">
-<link rel="stylesheet" href="../assets/css/variables.css">
-<link rel="stylesheet" href="../assets/css/layout.css">
-<link rel="stylesheet" href="../assets/css/components.css">
-<link rel="stylesheet" href="../assets/css/animations.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
 
 <style>
+/* ================= ROOT ================= */
+:root{
+  --bg:#0b0f1a;
+  --panel:#12182b;
+  --glass:rgba(255,255,255,0.08);
+  --border:rgba(255,255,255,0.15);
+  --text:#eaf6ff;
+  --muted:#9bb0c9;
+  --accent:#7df9ff;
+  --danger:#ff3344;
+  --ok:#4dff88;
+  --gold:#ffcf40;
+}
+
+*{box-sizing:border-box;}
+
 body{
-    margin:0;
-    font-family:Arial, sans-serif;
-    background:#0a0a0a;
-    color:#fff;
-    overflow:hidden;
+  margin:0;
+  font-family:'Inter',sans-serif;
+  background:radial-gradient(circle at top,#141b33,#05070f 65%);
+  color:var(--text);
+  min-height:100vh;
 }
 
-.container{
-    max-width:720px;
-    margin:0 auto;
-    padding:20px;
-    display:flex;
-    flex-direction:column;
-    gap:20px;
-    text-align:center;
+/* ================= LAYOUT ================= */
+.app{
+  display:grid;
+  grid-template-columns:260px 1fr;
+  height:100vh;
 }
 
-h1{
-    font-size:2rem;
-    letter-spacing:.1em;
-    margin-bottom:0.5rem;
+/* ================= SIDEBAR (Global Consistency) ================= */
+.sidebar{
+  background:linear-gradient(180deg,#0d1224,#070a14);
+  padding:20px;
+  border-right:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  gap:20px;
 }
 
-.tagline{
-    font-size:1rem;
-    opacity:.7;
-    margin-bottom:20px;
+.brand{
+  font-family:'Montserrat',sans-serif;
+  font-size:22px;
+  font-weight:800;
+  background:linear-gradient(90deg,var(--accent),#ff4fd8);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  margin-bottom:10px;
 }
 
-.wallet{
-    text-align:right;
-    font-size:14px;
-    margin-bottom:10px;
+.menu button{
+  width:100%;
+  padding:14px 16px;
+  margin-bottom:10px;
+  border-radius:16px;
+  background:var(--glass);
+  border:1px solid var(--border);
+  color:var(--text);
+  text-align:left;
+  cursor:pointer;
+  font-weight:600;
+  transition:.25s;
 }
 
-.vip-badge{
-    display:inline-block;
-    font-size:16px;
-    color:gold;
-    margin-bottom:10px;
-    animation:glowPulse 2s infinite;
+.menu button:hover{
+  transform:translateX(6px);
+  border-color: var(--accent);
 }
 
-@keyframes glowPulse{
-    0%,100%{text-shadow:0 0 5px gold;}
-    50%{text-shadow:0 0 15px gold;}
+.menu button.active{
+  background: var(--gold);
+  color: #000;
+  border-color: var(--gold);
 }
 
-.vip-content{
-    background:linear-gradient(180deg,#111,#222);
-    padding:20px;
-    border-radius:12px;
-    box-shadow:0 0 20px #00eaff55;
-    display:flex;
-    flex-direction:column;
-    gap:15px;
-    align-items:center;
-    min-height:300px;
-    position:relative;
-    overflow:hidden;
+/* ================= CONTENT ================= */
+.main{
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
 }
 
-.vip-particle{
-    position:absolute;
-    width:6px;
-    height:6px;
-    border-radius:50%;
-    background:#0ff;
-    opacity:.7;
-    animation:vipParticle 5s linear infinite;
+.vip-card {
+  background: var(--panel);
+  max-width: 500px;
+  width: 100%;
+  padding: 40px;
+  border-radius: 32px;
+  border: 1px solid var(--border);
+  text-align: center;
+  position: relative;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
 }
 
-@keyframes vipParticle{
-    0%{transform:translateY(0) scale(0.5);}
-    50%{transform:translateY(-200px) scale(1);}
-    100%{transform:translateY(0) scale(0.5);}
+.vip-icon {
+  font-size: 60px;
+  margin-bottom: 20px;
+  display: block;
 }
 
-.vip-btn{
-    margin-top:12px;
-    padding:8px 20px;
-    border-radius:999px;
-    border:none;
-    background:#00eaff;
-    color:#000;
-    font-weight:bold;
-    cursor:pointer;
-    transition:.3s;
-}
-.vip-btn:hover{
-    background:#0cf;
-    box-shadow:0 0 20px #00eaff55;
+h1 { font-family: 'Montserrat', sans-serif; margin-bottom: 10px; }
+.desc { color: var(--muted); font-size: 14px; margin-bottom: 30px; }
+
+.wallet-info {
+  background: var(--glass);
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 14px;
+  margin-bottom: 20px;
+  display: inline-block;
 }
 
-/* Footer */
-.footer{
-    margin-top:50px;
-    font-size:12px;
-    opacity:.6;
-    text-align:center;
+.vip-benefits {
+    text-align: left;
+    margin: 20px 0;
+    padding: 0;
+    list-style: none;
+    font-size: 14px;
+}
+
+.vip-benefits li {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.vip-benefits li::before { content: "✦"; color: var(--gold); }
+
+.vip-btn {
+  width: 100%;
+  padding: 18px;
+  border-radius: 18px;
+  border: none;
+  background: linear-gradient(90deg, var(--gold), #ff9900);
+  color: #000;
+  font-weight: 800;
+  cursor: pointer;
+  font-size: 16px;
+  transition: 0.3s;
+}
+
+.vip-btn:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 25px rgba(255, 207, 64, 0.4);
+}
+
+.vip-particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--gold);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: float 3s linear forwards;
+}
+
+@keyframes float {
+  to { transform: translateY(-100px); opacity: 0; }
 }
 </style>
 </head>
 <body>
 
-<div class="container">
+<div class="app">
+    <aside class="sidebar">
+        <div class="brand">HOLA LIVE</div>
+        <nav class="menu">
+            <button onclick="location.href='index.html'">🏠 Нүүр хуудас</button>
+            <button onclick="location.href='streamer.html'">🎥 Streamer</button>
+            <button class="active">👑 VIP Room</button>
+            <button onclick="location.href='store.html'">💎 Дэлгүүр</button>
+            <button onclick="location.href='profile.html'">👤 Профайл</button>
+        </nav>
+    </aside>
 
-    <h1>VIP ROOM</h1>
-    <div class="tagline">Exclusive Access • Special Gifts • Streamer Interaction</div>
+    <main class="main">
+        <div class="vip-card" id="vipBox">
+            <span class="vip-icon">👑</span>
+            <h1 id="vipTitle">VIP ACCESS</h1>
+            <p class="desc" id="vipDesc">Онцгой эрхүүд болон тусгай бэлэгнүүдийг нээх</p>
+            
+            <div class="wallet-info">Хэтэвч: 💎 <span id="walletDisp">0</span></div>
 
-    <div class="wallet">Wallet: 💎 <span id="walletTokens">0</span></div>
+            <ul class="vip-benefits">
+                <li>VIP Badge чат дээр харагдана</li>
+                <li>Дэлгүүрийн бэлэгнүүд 20% хямдарна</li>
+                <li>Тусгай VIP Live үзэх эрх</li>
+            </ul>
 
-    <div class="vip-badge" id="vipBadge">👑 VIP</div>
-
-    <div class="vip-content" id="vipContent">
-        <p>VIP-д зөвхөн токен төлсөн хэрэглэгч орж болно!</p>
-        <button class="vip-btn" id="enterVIP">Орж орох</button>
-    </div>
+            <button class="vip-btn" id="vipActionBtn" onclick="handleVIPPurchase()">
+                250💎 Төлөөд идэвхжүүлэх
+            </button>
+        </div>
+    </main>
 </div>
 
-<footer class="footer">
-© 2026 Hola Live. Бүх эрх хуулиар хамгаалагдсан.
-</footer>
 
-<!-- ========================= -->
-<!-- SCRIPTS -->
-<!-- ========================= -->
-<script src="../assets/js/core/state.js"></script>
-<script src="../assets/js/core/storage.js"></script>
-<script src="../assets/js/economy/token.js"></script>
-<script src="../assets/js/economy/vip.js"></script>
-<script src="../assets/js/uiEnhance.js"></script>
 
 <script>
-// ==== INIT WALLET ====
-document.addEventListener("DOMContentLoaded",()=>{
-    document.getElementById("walletTokens").innerText = Economy.getWallet();
-});
+    // 📊 GLOBAL STATE SYNC
+    const Economy = {
+        getWallet: () => parseInt(localStorage.getItem('hola_wallet')) || 0,
+        setWallet: (val) => {
+            localStorage.setItem('hola_wallet', val);
+            document.getElementById('walletDisp').innerText = val.toLocaleString();
+        },
+        isVIP: () => localStorage.getItem('is_vip') === 'true'
+    };
 
-// ==== VIP ACCESS HANDLER ====
-document.getElementById("enterVIP").addEventListener("click",()=>{
-    const cost = 250;
-
-    if(Economy.spendTokens(cost)){
-        VIP.activateVIP();
-        document.getElementById("vipBadge").innerText="👑 VIP ACTIVE";
-        alert("🎉 Амжилттай VIP боллоо!");
-    } else {
-        alert("💎 Таны wallet-д токен хүрэлцэхгүй байна!");
+    // INIT PAGE
+    function init() {
+        const wallet = Economy.getWallet();
+        document.getElementById('walletDisp').innerText = wallet.toLocaleString();
+        
+        if (Economy.isVIP()) {
+            setAlreadyVIP();
+        }
     }
 
-    document.getElementById("walletTokens").innerText = Economy.getWallet();
-});
-
-// ==== VIP PARTICLES ====
-function createParticles(count=30){
-    const container = document.getElementById("vipContent");
-    for(let i=0;i<count;i++){
-        const p = document.createElement("div");
-        p.className="vip-particle";
-        p.style.left = Math.random()*90+"%";
-        p.style.top = Math.random()*90+"%";
-        container.appendChild(p);
-
-        setTimeout(()=>p.remove(),5000);
+    function setAlreadyVIP() {
+        document.getElementById('vipTitle').innerText = "VIP ACTIVE";
+        document.getElementById('vipTitle').style.color = "var(--gold)";
+        document.getElementById('vipDesc').innerText = "Та VIP эрхээ амжилттай авсан байна.";
+        document.getElementById('vipActionBtn').innerText = "VIP ӨРӨӨ РҮҮ ОРОХ";
+        document.getElementById('vipActionBtn').style.background = "var(--glass)";
+        document.getElementById('vipActionBtn').style.color = "#fff";
+        document.getElementById('vipActionBtn').onclick = () => alert("VIP Өрөө удахгүй нээгдэнэ!");
     }
-}
 
-// Animate particles every 1.5s
-setInterval(()=>{createParticles(15);},1500);
+    // PURCHASE HANDLER
+    function handleVIPPurchase() {
+        const cost = 250;
+        const currentWallet = Economy.getWallet();
 
+        if (currentWallet >= cost) {
+            const confirmPurchase = confirm("250 токен төлж VIP болох уу?");
+            if (confirmPurchase) {
+                Economy.setWallet(currentWallet - cost);
+                localStorage.setItem('is_vip', 'true');
+                
+                // Animation & Success
+                createParticles();
+                setAlreadyVIP();
+                alert("🎉 Баяр хүргэе! Та VIP хэрэглэгч боллоо.");
+            }
+        } else {
+            alert("💎 Төлбөр хийхэд токен хүрэлцэхгүй байна. Дэлгүүрээс цэнэглэнэ үү!");
+            window.location.href = 'store.html';
+        }
+    }
+
+    // VISUAL EFFECTS
+    function createParticles() {
+        const box = document.getElementById('vipBox');
+        for(let i=0; i<20; i++) {
+            const p = document.createElement('div');
+            p.className = 'vip-particle';
+            p.style.left = Math.random() * 100 + "%";
+            p.style.top = Math.random() * 100 + "%";
+            box.appendChild(p);
+            setTimeout(() => p.remove(), 3000);
+        }
+    }
+
+    window.onload = init;
 </script>
 
 </body>
