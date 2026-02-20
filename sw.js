@@ -1,50 +1,47 @@
-const CACHE_NAME = "hola-live-v3";
-
-const urlsToCache = [
-  "/",
-  "index.html",
-  "live.html",
-  "manifest.json"
+const CACHE_NAME = 'hola-live-v1';
+const ASSETS_TO_CACHE = [
+  '/',
+  '/index.html',
+  '/store.html',
+  '/streamer.html',
+  '/profile.html',
+  '/vip.html',
+  '/moderator.html',
+  '/manifest.json'
+  // Хэрэв танд CSS эсвэл JS файлууд тусдаа байгаа бол энд замыг нь нэмээрэй
 ];
 
-self.addEventListener("install", event => {
+// 1. Install Service Worker & Cache Assets
+self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(urlsToCache))
-      .then(() => self.skipWaiting())
+    caches.open(CACHE_NAME).then((cache) => {
+      console.log('Кэш үүсгэж байна...');
+      return cache.addAll(ASSETS_TO_CACHE);
+    })
   );
 });
 
-self.addEventListener("activate", event => {
+// 2. Activate & Cleanup old caches
+self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(
-        keys.filter(key => key !== CACHE_NAME)
-            .map(key => caches.delete(key))
-      )
-    ).then(() => self.clients.claim())
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cache) => {
+          if (cache !== CACHE_NAME) {
+            console.log('Хуучин кэшийг устгаж байна...');
+            return caches.delete(cache);
+          }
+        })
+      );
+    })
   );
 });
 
-self.addEventListener("fetch", event => {
+// 3. Fetch assets from cache or network
+self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        if (response) return response;
-
-        return fetch(event.request)
-          .then(networkResponse => {
-            return caches.open(CACHE_NAME)
-              .then(cache => {
-                cache.put(event.request, networkResponse.clone());
-                return networkResponse;
-              });
-          })
-          .catch(() => {
-            if (event.request.mode === "navigate") {
-              return caches.match("index.html");
-            }
-          });
-      })
+    caches.match(event.request).then((response) => {
+      return response || fetch(event.request);
+    })
   );
 });
