@@ -1,37 +1,16 @@
-// ROLE ENGINE
-
 const RoleEngine = (() => {
+  const ROLES = { VIEWER:'viewer', STREAMER:'streamer', MODERATOR:'moderator', ADMIN:'admin' };
+  let currentRole = localStorage.getItem('role') || ROLES.VIEWER;
 
-    const ROLES = {
-        VIEWER: "viewer",
-        STREAMER: "streamer",
-        MODERATOR: "moderator",
-        ADMIN: "admin"
-    };
+  const setRole = (role) => {
+    if(!Object.values(ROLES).includes(role)) return;
+    currentRole = role;
+    localStorage.setItem('role', currentRole);
+    document.getElementById('currentRole').innerText = currentRole;
+  }
 
-    function getRole() {
-        return localStorage.getItem("hola_role") || ROLES.VIEWER;
-    }
+  const getRole = () => currentRole;
+  const is = (role) => currentRole === role;
 
-    function setRole(role) {
-        localStorage.setItem("hola_role", role);
-        location.reload();
-    }
-
-    function is(role) {
-        return getRole() === role;
-    }
-
-    function hasAccess(allowedRoles) {
-        return allowedRoles.includes(getRole());
-    }
-
-    return {
-        ROLES,
-        getRole,
-        setRole,
-        is,
-        hasAccess
-    };
-
+  return {ROLES, setRole, getRole, is};
 })();
