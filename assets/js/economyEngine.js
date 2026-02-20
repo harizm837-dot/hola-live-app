@@ -1,43 +1,34 @@
-// ECONOMY ENGINE
-
 const Economy = (() => {
+  let wallet = parseInt(localStorage.getItem('wallet')) || 5000;
+  let streamerEarnings = parseInt(localStorage.getItem('streamerEarnings')) || 0;
 
-    function getTokens(){
-        return parseInt(localStorage.getItem("hola_tokens") || "500");
+  const updateUI = () => {
+    document.getElementById('walletTokens').innerText = wallet;
+    document.getElementById('earnings').innerText = streamerEarnings;
+  }
+
+  const spendTokens = (amount) => {
+    if(wallet >= amount){
+      wallet -= amount;
+      localStorage.setItem('wallet', wallet);
+      updateUI();
+      return true;
     }
+    alert("Wallet-д хүрэлцэхгүй байна");
+    return false;
+  }
 
-    function setTokens(val){
-        localStorage.setItem("hola_tokens", val);
-        updateWalletUI();
-    }
+  const addEarnings = (amount) => {
+    streamerEarnings += amount;
+    localStorage.setItem('streamerEarnings', streamerEarnings);
+    updateUI();
+  }
 
-    function addTokens(val){
-        setTokens(getTokens() + val);
-    }
+  const topUp = (amount) => {
+    wallet += amount;
+    localStorage.setItem('wallet', wallet);
+    updateUI();
+  }
 
-    function spendTokens(val){
-        if(getTokens() >= val){
-            setTokens(getTokens() - val);
-            return true;
-        }
-        alert("Not enough tokens ❌");
-        return false;
-    }
-
-    function updateWalletUI(){
-        const el = document.getElementById("walletTokens");
-        if(el) el.innerText = getTokens();
-    }
-
-    return {
-        getTokens,
-        addTokens,
-        spendTokens,
-        updateWalletUI
-    };
-
+  return {wallet, updateUI, spendTokens, addEarnings, topUp};
 })();
-
-document.addEventListener("DOMContentLoaded", ()=>{
-    Economy.updateWalletUI();
-});
