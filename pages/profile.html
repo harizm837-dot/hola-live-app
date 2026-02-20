@@ -1,196 +1,223 @@
-<!DOCTYPE html>
-<html lang="mn">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hola Live - Profile</title>
-
-<link rel="stylesheet" href="../assets/css/reset.css">
-<link rel="stylesheet" href="../assets/css/variables.css">
-<link rel="stylesheet" href="../assets/css/layout.css">
-<link rel="stylesheet" href="../assets/css/components.css">
-<link rel="stylesheet" href="../assets/css/animations.css">
-
+<div class="profile-page">
 <style>
-body{
-    margin:0;
-    font-family:Arial, sans-serif;
-    background:#0a0a0a;
-    color:#fff;
-    overflow-x:hidden;
-}
+    .profile-page {
+        padding: 20px;
+        max-width: 800px;
+        margin: 0 auto;
+        animation: fadeIn 0.5s ease-out;
+    }
 
-.container{
-    max-width:720px;
-    margin:0 auto;
-    padding:20px;
-    display:flex;
-    flex-direction:column;
-    gap:20px;
-    text-align:center;
-}
+    /* 👤 USER HEADER */
+    .user-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
 
-h1{
-    font-size:2rem;
-    letter-spacing:.1em;
-    margin-bottom:0.5rem;
-}
+    .avatar-wrapper {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 15px;
+    }
 
-.wallet{
-    font-size:14px;
-    text-align:right;
-}
+    .avatar-main {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: linear-gradient(45deg, var(--accent), #ff00c8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+        font-weight: 800;
+        color: #000;
+        border: 4px solid var(--panel);
+        box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+    }
 
-.vip-badge{
-    font-size:16px;
-    color:gold;
-    margin:10px 0;
-    animation:glowPulse 2s infinite;
-}
+    .level-badge {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background: #fff;
+        color: #000;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 800;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
 
-@keyframes glowPulse{
-    0%,100%{text-shadow:0 0 5px gold;}
-    50%{text-shadow:0 0 15px gold;}
-}
+    /* 📊 STATS GRID */
+    .stats-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 15px;
+        margin-bottom: 30px;
+    }
 
-.profile-card{
-    background:linear-gradient(180deg,#111,#222);
-    padding:20px;
-    border-radius:12px;
-    box-shadow:0 0 20px #00eaff55;
-    display:flex;
-    flex-direction:column;
-    gap:15px;
-    align-items:center;
-    position:relative;
-    overflow:hidden;
-}
+    .stat-item {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        padding: 20px;
+        border-radius: 24px;
+        text-align: center;
+        transition: 0.3s;
+    }
 
-.stat{
-    display:flex;
-    justify-content:space-between;
-    width:80%;
-    font-size:14px;
-    padding:5px 0;
-    border-bottom:1px solid #00eaff33;
-}
+    .stat-item:hover {
+        border-color: var(--accent);
+        transform: translateY(-5px);
+    }
 
-.gift-btn{
-    padding:8px 20px;
-    border-radius:999px;
-    border:none;
-    background:#00eaff;
-    color:#000;
-    cursor:pointer;
-    transition:.3s;
-}
-.gift-btn:hover{
-    background:#0cf;
-    box-shadow:0 0 20px #00eaff55;
-}
+    .stat-item i { display: block; font-size: 24px; margin-bottom: 10px; }
+    .stat-item b { font-size: 20px; font-family: 'Montserrat'; color: #fff; }
+    .stat-item span { display: block; font-size: 11px; color: var(--muted); text-transform: uppercase; margin-top: 5px; }
 
-.profile-particle{
-    position:absolute;
-    width:6px;
-    height:6px;
-    border-radius:50%;
-    background:#0ff;
-    opacity:.7;
-    animation:profileParticle 5s linear infinite;
-}
+    /* 🏆 PROGRESS SECTION */
+    .level-progress {
+        background: var(--panel);
+        padding: 25px;
+        border-radius: 28px;
+        border: 1px solid var(--border);
+        margin-bottom: 30px;
+    }
 
-@keyframes profileParticle{
-    0%{transform:translateY(0) scale(0.5);}
-    50%{transform:translateY(-200px) scale(1);}
-    100%{transform:translateY(0) scale(0.5);}
-}
+    .progress-info {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        font-size: 13px;
+    }
 
-/* Footer */
-.footer{
-    margin-top:50px;
-    font-size:12px;
-    opacity:.6;
-    text-align:center;
-}
+    .bar-bg {
+        height: 12px;
+        background: rgba(255,255,255,0.05);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .bar-fill {
+        height: 100%;
+        width: 65%; /* Dynamic */
+        background: linear-gradient(90deg, var(--accent), #0072ff);
+        box-shadow: 0 0 15px var(--accent);
+    }
+
+    /* ⚙️ SETTINGS LIST */
+    .settings-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .setting-row {
+        background: var(--glass);
+        padding: 15px 20px;
+        border-radius: 18px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .setting-row:hover { background: rgba(255,255,255,0.05); }
+
+    .vip-status-active { color: #ffd700; font-weight: 700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
+
 </style>
-</head>
-<body>
 
-<div class="container">
-
-    <h1>Миний Профайл</h1>
-
-    <div class="wallet">Wallet: 💎 <span id="walletTokens">0</span></div>
-
-    <div class="vip-badge" id="vipBadge">👑 VIP статус</div>
-
-    <div class="profile-card" id="profileCard">
-        <div class="stat"><span>Нийт токен:</span><span id="totalTokens">0</span></div>
-        <div class="stat"><span>Зоос ашигласан:</span><span id="spentTokens">0</span></div>
-        <div class="stat"><span>Бэлэг авсан:</span><span id="giftsReceived">0</span></div>
-        <div class="stat"><span>Бэлэг өгсөн:</span><span id="giftsSent">0</span></div>
-
-        <button class="gift-btn" id="sendGiftBtn">Бэлэг илгээх</button>
+<div class="user-header">
+    <div class="avatar-wrapper">
+        <div class="avatar-main" id="userInitial">U</div>
+        <div class="level-badge">LVL 14</div>
     </div>
-
+    <h2 id="profileUsername">User_Name</h2>
+    <p id="vipLabel" class="vip-status-active">👑 VIP MBR</p>
 </div>
 
-<footer class="footer">
-© 2026 Hola Live. Бүх эрх хуулиар хамгаалагдсан.
-</footer>
+<div class="stats-container">
+    <div class="stat-item">
+        <i>💎</i>
+        <b id="walletTokens">0</b>
+        <span>Wallet</span>
+    </div>
+    <div class="stat-item">
+        <i>🎁</i>
+        <b id="giftsReceived">0</b>
+        <span>Received</span>
+    </div>
+    <div class="stat-item">
+        <i>📤</i>
+        <b id="giftsSent">0</b>
+        <span>Sent</span>
+    </div>
+    <div class="stat-item">
+        <i>🔥</i>
+        <b id="totalTokens">0</b>
+        <span>Lifetime</span>
+    </div>
+</div>
 
-<script src="../assets/js/core/state.js"></script>
-<script src="../assets/js/core/storage.js"></script>
-<script src="../assets/js/economy/token.js"></script>
-<script src="../assets/js/economy/gift.js"></script>
-<script src="../assets/js/economy/vip.js"></script>
-<script src="../assets/js/uiEnhance.js"></script>
+<div class="level-progress">
+    <div class="progress-info">
+        <span>Дараагийн түвшин хүртэл</span>
+        <span>650 / 1000 XP</span>
+    </div>
+    <div class="bar-bg">
+        <div class="bar-fill"></div>
+    </div>
+</div>
+
+<div class="settings-list">
+    <div class="setting-row" onclick="alert('Account settings coming soon!')">
+        <span>Бүртгэл тохируулах</span>
+        <span>❯</span>
+    </div>
+    <div class="setting-row" onclick="navigateTo('ledger.html')">
+        <span>Гүйлгээний түүх</span>
+        <span>❯</span>
+    </div>
+    <div class="setting-row" onclick="logout()">
+        <span style="color: var(--danger);">Гарах</span>
+        <span>❯</span>
+    </div>
+</div>
 
 <script>
-// ==== INIT WALLET & STATS ====
-function updateProfileStats(){
-    document.getElementById("walletTokens").innerText = Economy.getWallet();
-    document.getElementById("totalTokens").innerText = Economy.getTotalTokens();
-    document.getElementById("spentTokens").innerText = Economy.getSpentTokens();
-    document.getElementById("giftsReceived").innerText = Gift.getReceived();
-    document.getElementById("giftsSent").innerText = Gift.getSent();
+    function updateProfileUI() {
+        // Таны Economy болон Gift JS сангуудаас өгөгдөл авах
+        const wallet = typeof Economy !== 'undefined' ? Economy.getWallet() : 0;
+        const received = typeof Gift !== 'undefined' ? Gift.getReceived() : 0;
+        const sent = typeof Gift !== 'undefined' ? Gift.getSent() : 0;
+        const total = typeof Economy !== 'undefined' ? Economy.getTotalTokens() : 0;
+        const username = localStorage.getItem("hola_username") || "Хэрэглэгч";
 
-    if(VIP.isVIP()){
-        document.getElementById("vipBadge").innerText="👑 VIP ACTIVE";
+        document.getElementById("walletTokens").innerText = wallet.toLocaleString();
+        document.getElementById("giftsReceived").innerText = received;
+        document.getElementById("giftsSent").innerText = sent;
+        document.getElementById("totalTokens").innerText = total.toLocaleString();
+        document.getElementById("profileUsername").innerText = username;
+        document.getElementById("userInitial").innerText = username[0].toUpperCase();
+
+        // VIP шалгах
+        if(typeof VIP !== 'undefined' && !VIP.isVIP()) {
+            const v = document.getElementById("vipLabel");
+            v.innerText = "Стандарт гишүүн";
+            v.className = "";
+            v.style.color = "var(--muted)";
+        }
     }
-}
 
-document.addEventListener("DOMContentLoaded",()=>{
-    updateProfileStats();
-});
-
-// ==== SEND GIFT ====
-document.getElementById("sendGiftBtn").addEventListener("click",()=>{
-    const cost = 20;
-    if(Economy.spendTokens(cost)){
-        Gift.send(cost);
-        alert("🎁 Бэлэг илгээсэн!");
-    } else {
-        alert("💎 Wallet-д токен хүрэлцэхгүй байна!");
+    function logout() {
+        if(confirm("Та гарахдаа итгэлтэй байна уу?")) {
+            localStorage.clear();
+            window.location.href = "index.html";
+        }
     }
-    updateProfileStats();
-});
 
-// ==== PARTICLES ====
-function createParticles(count=20){
-    const container = document.getElementById("profileCard");
-    for(let i=0;i<count;i++){
-        const p=document.createElement("div");
-        p.className="profile-particle";
-        p.style.left=Math.random()*90+"%";
-        p.style.top=Math.random()*90+"%";
-        container.appendChild(p);
-        setTimeout(()=>p.remove(),5000);
-    }
-}
-
-setInterval(()=>{createParticles(10);},1500);
+    // Initialize
+    updateProfileUI();
 </script>
-
-</body>
-</html>
+</div>
