@@ -1,337 +1,225 @@
-<!DOCTYPE html>
-<html lang="mn">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hola Live - Stream</title>
-
-<link rel="stylesheet" href="../assets/css/reset.css">
-<link rel="stylesheet" href="../assets/css/variables.css">
-<link rel="stylesheet" href="../assets/css/layout.css">
-<link rel="stylesheet" href="../assets/css/components.css">
-<link rel="stylesheet" href="../assets/css/animations.css">
-<link rel="stylesheet" href="../assets/css/responsive.css">
+<div class="live-container">
 
 <style>
-body{
-    margin:0;
-    background:#000;
-    color:white;
-    font-family:Arial, sans-serif;
-    overflow:hidden;
-    transition:opacity 0.3s ease;
+.live-container{
+  position:relative;
+  height:100vh;
+  width:100%;
+  overflow:hidden;
+  background:#000;
+  font-family:'Inter',sans-serif;
 }
 
-/* STREAM VIDEO & BACKGROUND */
-.video-area{
-    height:100vh;
-    position:relative;
-    background:linear-gradient(180deg,#111,#000);
+/* ===== VIDEO BACKGROUND ===== */
+.live-video{
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at center,#111 0%,#000 70%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#222;
+  font-size:22px;
 }
 
-#liveCanvas{
-    position:absolute;
-    inset:0;
-    z-index:0;
-}
-
-/* TOP BAR */
+/* ===== TOP OVERLAY ===== */
 .live-top-bar{
-    position:fixed;
-    top:10px;
-    left:50%;
-    transform:translateX(-50%);
-    display:flex;
-    gap:1.2rem;
-    font-size:14px;
-    z-index:1000;
-    background:rgba(0,0,0,.35);
-    padding:6px 12px;
-    border-radius:8px;
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  padding:12px 15px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:linear-gradient(to bottom,rgba(0,0,0,.8),transparent);
+  z-index:10;
 }
 
-/* WALLET / VIP */
+.live-badge{
+  background:linear-gradient(90deg,#ff004c,#ff7300);
+  padding:5px 12px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:700;
+  box-shadow:0 0 10px #ff004c;
+}
+
+.viewer-box{
+  font-size:13px;
+  color:#fff;
+}
+
+/* ===== WALLET ===== */
 .wallet-box{
-    position:absolute;
-    top:10px;
-    right:140px;
-    font-size:14px;
-    z-index:1000;
-}
-.vip-badge{
-    position:absolute;
-    top:50px;
-    right:140px;
-    font-size:14px;
-    color:gold;
+  position:absolute;
+  top:60px;
+  right:15px;
+  background:rgba(0,0,0,.6);
+  backdrop-filter:blur(10px);
+  padding:8px 14px;
+  border-radius:20px;
+  font-size:14px;
+  border:1px solid rgba(0,255,255,.3);
+  box-shadow:0 0 12px rgba(0,255,255,.3);
 }
 
-/* STREAMER PANEL */
-.streamer-controls{
-    position:fixed;
-    bottom:90px;
-    right:10px;
-    background:#222;
-    padding:12px;
-    border-radius:10px;
-    display:none;
-    z-index:1000;
+/* ===== RIGHT SIDE ACTIONS ===== */
+.live-actions{
+  position:absolute;
+  right:10px;
+  bottom:140px;
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+  z-index:20;
 }
 
-/* ROLE PANEL */
-.role-panel{
-    position:fixed;
-    top:10px;
-    right:10px;
-    background:#111;
-    padding:10px;
-    border-radius:10px;
-    font-size:12px;
-    z-index:1000;
+.action-btn{
+  width:55px;
+  height:55px;
+  border-radius:50%;
+  background:rgba(0,0,0,.6);
+  backdrop-filter:blur(8px);
+  border:1px solid rgba(0,255,255,.4);
+  color:#fff;
+  font-size:22px;
+  cursor:pointer;
+  transition:.2s;
 }
 
-/* BOTTOM CONTROLS */
-.live-bottom-bar{
-    position:fixed;
-    bottom:10px;
-    left:50%;
-    transform:translateX(-50%);
-    display:flex;
-    gap:8px;
-    z-index:1000;
-}
-.live-btn{
-    width:44px;
-    height:44px;
-    border-radius:50%;
-    background:rgba(0,255,255,.2);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    font-size:20px;
-    transition:all .3s ease;
-}
-.live-btn:hover{
-    background:#00eaff;
-    color:#000;
+.action-btn:hover{
+  transform:scale(1.1);
+  box-shadow:0 0 15px #00f0ff;
 }
 
-/* Chat Box */
-.chat-box{
-    position:absolute;
-    bottom:70px;
-    left:10px;
-    width:240px;
-    max-height:50vh;
-    background:rgba(0,0,0,0.5);
-    padding:6px;
-    border-radius:8px;
-    overflow-y:auto;
-    font-size:13px;
-    z-index:1000;
-}
-.chat-msg{
-    margin-bottom:4px;
-}
-.user-msg{
-    color:#00eaff;
+/* ===== BOTTOM INFO ===== */
+.stream-info{
+  position:absolute;
+  bottom:70px;
+  left:15px;
+  right:90px;
+  color:#fff;
 }
 
-/* Gift Pop Animation */
-.combo-pop{
-    position:absolute;
-    font-size:20px;
-    font-weight:bold;
-    color:#00eaff;
-    animation:giftFloat 2s ease-out forwards;
-    z-index:1500;
-}
-@keyframes giftFloat{
-    0%{opacity:1; transform:translateY(0);}
-    100%{opacity:0; transform:translateY(-80px);}
+.stream-info h3{
+  margin:0;
+  font-size:16px;
+  font-weight:700;
 }
 
-/* Footer */
-.live-footer{
-    position:fixed;
-    bottom:0;
-    width:100%;
-    text-align:center;
-    font-size:12px;
-    opacity:.6;
-    z-index:1000;
+.stream-info p{
+  font-size:13px;
+  color:#aaa;
+}
+
+/* ===== FLOATING HEART ===== */
+.heart{
+  position:absolute;
+  bottom:100px;
+  font-size:20px;
+  animation:floatUp 2s linear forwards;
+}
+
+@keyframes floatUp{
+  0%{transform:translateY(0);opacity:1;}
+  100%{transform:translateY(-250px);opacity:0;}
+}
+
+/* ===== GIFT BURST ===== */
+.gift-pop{
+  position:absolute;
+  bottom:200px;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:24px;
+  animation:popGift 1.5s ease-out forwards;
+  color:#00f0ff;
+  text-shadow:0 0 10px #00f0ff;
+}
+
+@keyframes popGift{
+  0%{transform:translateX(-50%) scale(.5);opacity:0;}
+  50%{transform:translateX(-50%) scale(1.2);opacity:1;}
+  100%{transform:translateX(-50%) scale(1);opacity:0;}
 }
 </style>
-</head>
-<body>
 
-<!-- STREAM VIDEO AREA -->
-<div class="video-area">
-    <canvas id="liveCanvas"></canvas>
-
-    <!-- WALLET -->
-    <div class="wallet-box">
-        Wallet: 💎 <span id="walletTokens">0</span>
-    </div>
-
-    <!-- VIP BADGE -->
-    <div class="vip-badge" id="vipBadge"></div>
-
-    <!-- CHAT -->
-    <div class="chat-box" id="chatBox"></div>
-
+<!-- VIDEO -->
+<div class="live-video">
+  🎥 LIVE STREAM
 </div>
 
-<!-- STREAMER PANEL -->
-<div class="streamer-controls" id="streamerPanel">
-    <button onclick="stopLive()">⛔ Stop Live</button>
+<!-- TOP -->
+<div class="live-top-bar">
+  <div class="live-badge">LIVE</div>
+  <div class="viewer-box">👁 <span id="viewerCount">245</span></div>
 </div>
 
-<!-- ROLE PANEL -->
-<div class="role-panel">
-Role: <span id="currentRole"></span><br><br>
-<button onclick="RoleEngine.setRole('viewer')">Viewer</button>
-<button onclick="RoleEngine.setRole('streamer')">Streamer</button>
-<button onclick="RoleEngine.setRole('moderator')">Mod</button>
+<!-- WALLET -->
+<div class="wallet-box">
+  💎 <span id="walletCounter">0</span>
 </div>
 
-<!-- BOTTOM BAR -->
-<div class="live-bottom-bar">
-    <div class="live-btn" onclick="sendChat()">💬</div>
-    <div class="live-btn" onclick="sendGift()">🎁</div>
-    <div class="live-btn" onclick="sendReaction()">❤️</div>
-    <div class="live-btn" onclick="window.location.href='leaderboard.html'">🏆</div>
-    <div class="live-btn" onclick="window.location.href='store.html'">🛒</div>
-    <div class="live-btn" onclick="window.location.href='analytics.html'">📊</div>
-    <div class="live-btn" onclick="VIP.activateVIP()">👑</div>
-    <div class="live-btn" onclick="openModPanel()">🛡</div>
+<!-- RIGHT ACTIONS -->
+<div class="live-actions">
+  <button class="action-btn" onclick="sendHeart()">❤️</button>
+  <button class="action-btn" onclick="sendGift()">🎁</button>
+  <button class="action-btn" onclick="alert('Share')">📤</button>
+  <button class="action-btn" onclick="loadPage('analytics.html')">📊</button>
 </div>
 
-<!-- FOOTER -->
-<footer class="live-footer">
-© 2026 Hola Live. Бүх эрх хуулиар хамгаалагдсан.
-</footer>
-
-<!-- ========================= -->
-<!-- SCRIPTS -->
-<!-- ========================= -->
-<script src="../assets/js/core/state.js"></script>
-<script src="../assets/js/core/router.js"></script>
-<script src="../assets/js/core/notifications.js"></script>
-<script src="../assets/js/economy/token.js"></script>
-<script src="../assets/js/economy/gift.js"></script>
-<script src="../assets/js/features/liveEngine.js"></script>
-<script src="../assets/js/uiEnhance.js"></script>
+<!-- STREAM INFO -->
+<div class="stream-info">
+  <h3>@StreamerName</h3>
+  <p>Cyberpunk Night Session 🚀 #hola</p>
+</div>
 
 <script>
-// ==== Canvas Stream Simulation ====
-const canvas = document.getElementById('liveCanvas');
-const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+let wallet = 0;
 
-let particles = [];
-for(let i=0;i<600;i++){
-    particles.push({
-        x: Math.random()*canvas.width,
-        y: Math.random()*canvas.height,
-        size: Math.random()*2+1,
-        speed: Math.random()*1.5+0.2
-    });
-}
-function animateCanvas(){
-    ctx.fillStyle='rgba(0,0,0,0.2)';
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle='#00eaff';
-    particles.forEach(p=>{
-        ctx.beginPath();
-        ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
-        ctx.fill();
-        p.y -= p.speed;
-        if(p.y<0) p.y=canvas.height;
-    });
-    requestAnimationFrame(animateCanvas);
-}
-animateCanvas();
-window.addEventListener('resize',()=>{
-    canvas.width=window.innerWidth;
-    canvas.height=window.innerHeight;
-});
+/* ===== ANIMATED WALLET ===== */
+function animateWallet(newAmount){
+  const el=document.getElementById('walletCounter');
+  let start=wallet;
+  let end=newAmount;
+  let duration=600;
+  let startTime=null;
 
-// ==== Viewer Count Simulation ====
-const viewerCountEl = document.getElementById('viewerCount') || document.createElement('span');
-let viewers = Math.floor(Math.random()*500);
-if(viewerCountEl) viewerCountEl.textContent = `Үзэгчид: ${viewers}`;
-setInterval(()=>{
-    viewers += Math.floor(Math.random()*3-1);
-    if(viewers<0) viewers=0;
-    if(viewerCountEl) viewerCountEl.textContent = `Үзэгчид: ${viewers}`;
-},3000);
-
-// ==== Chat Simulation ====
-const chatBox = document.getElementById('chatBox');
-const fakeMsgs = ["Сайн уу!", "Стрим сайн байна!", "Хандалт их байна!", "💖💖", "Баярлалаа!"];
-setInterval(()=>{
-    const msg = fakeMsgs[Math.floor(Math.random()*fakeMsgs.length)];
-    const div = document.createElement('div');
-    div.className='chat-msg';
-    div.textContent = msg;
-    chatBox.appendChild(div);
-    chatBox.scrollTop = chatBox.scrollHeight;
-},2500);
-
-// ==== Gift Animation ====
-let activeGifts = [];
-function spawnGift(type){
-    const gift = {
-        type,
-        x: Math.random()*canvas.width,
-        y: canvas.height,
-        size: 40 + Math.random()*20,
-        speed: 2 + Math.random()*2
-    };
-    activeGifts.push(gift);
-}
-function animateGifts(){
-    ctx.fillStyle='rgba(0,0,0,0)';
-    activeGifts.forEach((gift,i)=>{
-        ctx.font = `${gift.size}px Arial`;
-        ctx.fillText(gift.type,gift.x,gift.y);
-        gift.y -= gift.speed;
-        if(gift.y<-50) activeGifts.splice(i,1);
-    });
-    requestAnimationFrame(animateGifts);
-}
-animateGifts();
-
-// Gift buttons
-document.querySelectorAll('.live-btn').forEach(btn=>{
-    if(btn.innerText==='🎁') btn.addEventListener('click',()=>spawnGift('🎁'));
-    if(btn.innerText==='❤️') btn.addEventListener('click',()=>spawnGift('❤️'));
-});
-
-// ==== Role & Streamer Panel ====
-document.addEventListener('DOMContentLoaded',()=>{
-    document.getElementById("currentRole").innerText = RoleEngine.getRole();
-    if(RoleEngine.is(RoleEngine.ROLES.STREAMER)){
-        document.getElementById("streamerPanel").style.display="block";
+  function update(timestamp){
+    if(!startTime) startTime=timestamp;
+    let progress=timestamp-startTime;
+    let percent=Math.min(progress/duration,1);
+    let value=Math.floor(start+(end-start)*percent);
+    el.innerText=value;
+    if(percent<1){
+      requestAnimationFrame(update);
+    }else{
+      wallet=end;
     }
-    if(VIP.isVIP()){
-        document.getElementById("vipBadge").innerText="👑 VIP ACTIVE";
-    }
-});
+  }
+  requestAnimationFrame(update);
+}
 
-// ==== Streamer Control ====
-function stopLive(){
-    if(!RoleEngine.is(RoleEngine.ROLES.STREAMER)){
-        alert("Only Streamer can stop live");
-        return;
-    }
-    alert("Live Ended 🔴");
-    window.location.href="../index.html";
+/* ===== HEART ===== */
+function sendHeart(){
+  const heart=document.createElement("div");
+  heart.className="heart";
+  heart.innerText="❤️";
+  heart.style.left=Math.random()*80+"%";
+  document.querySelector('.live-container').appendChild(heart);
+  setTimeout(()=>heart.remove(),2000);
+}
+
+/* ===== GIFT ===== */
+function sendGift(){
+  const gift=document.createElement("div");
+  gift.className="gift-pop";
+  gift.innerText="🎁 +50";
+  document.querySelector('.live-container').appendChild(gift);
+  animateWallet(wallet+50);
+  setTimeout(()=>gift.remove(),1500);
 }
 </script>
 
-</body>
-</html>
+</div>
