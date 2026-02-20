@@ -10,7 +10,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
 
 <style>
-
 /* ================= ROOT ================= */
 :root{
   --bg:#0b0f1a;
@@ -22,6 +21,7 @@
   --accent:#7df9ff;
   --danger:#ff3344;
   --ok:#4dff88;
+  --gold:#ffcf40;
 }
 
 *{box-sizing:border-box;}
@@ -32,14 +32,14 @@ body{
   background:radial-gradient(circle at top,#141b33,#05070f 65%);
   color:var(--text);
   min-height:100vh;
-  overflow-x:hidden;
+  overflow:hidden;
 }
 
 /* ================= APP GRID ================= */
 .app{
   display:grid;
   grid-template-columns:260px 1fr;
-  min-height:100vh;
+  height:100vh;
 }
 
 /* ================= SIDEBAR ================= */
@@ -59,6 +59,7 @@ body{
   background:linear-gradient(90deg,var(--accent),#ff4fd8);
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
+  margin-bottom:10px;
 }
 
 .menu button{
@@ -73,16 +74,27 @@ body{
   cursor:pointer;
   font-weight:600;
   transition:.25s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .menu button:hover{
   transform:translateX(6px);
+  border-color: var(--accent);
+}
+
+.menu button.active{
+  background: var(--accent);
+  color: #000;
+  border-color: var(--accent);
 }
 
 /* ================= MAIN ================= */
 .main{
   display:flex;
   flex-direction:column;
+  height: 100vh;
 }
 
 .header{
@@ -90,32 +102,40 @@ body{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:0 20px;
+  padding:0 25px;
   border-bottom:1px solid var(--border);
+  background: rgba(11, 15, 26, 0.5);
+  backdrop-filter: blur(10px);
 }
 
 .status{
   display:flex;
   gap:10px;
   align-items:center;
-  font-size:14px;
+  font-size:12px;
+  font-weight: 800;
+  letter-spacing: 1px;
 }
 
 .dot{
   width:10px;
   height:10px;
   border-radius:50%;
-  background:var(--ok);
-  box-shadow:0 0 8px var(--ok);
+  background:var(--danger);
+  box-shadow:0 0 8px var(--danger);
+  animation: pulse 1.5s infinite;
 }
+
+@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
 /* ================= CONTENT GRID ================= */
 .content{
   flex:1;
   padding:20px;
   display:grid;
-  grid-template-columns:1.3fr .7fr;
+  grid-template-columns: 1fr 380px;
   gap:20px;
+  overflow: hidden;
 }
 
 /* ================= STREAM PANEL ================= */
@@ -126,48 +146,26 @@ body{
   border:1px solid var(--border);
   display:flex;
   flex-direction:column;
+  gap: 15px;
 }
 
 .stream-preview{
-  aspect-ratio:16/9;
+  flex: 1;
   border-radius:18px;
-  background:
-    linear-gradient(135deg,rgba(255,255,255,.1),transparent),
-    url('https://dummyimage.com/1280x720/101522/ffffff&text=LIVE+STREAM');
-  background-size:cover;
-  margin-bottom:16px;
+  background: #000 url('https://dummyimage.com/1280x720/101522/ffffff&text=CAMERA+FEED+ACTIVE') center/cover;
   position:relative;
 }
 
 .stream-preview::after{
   content:"LIVE";
   position:absolute;
-  top:12px;
-  left:12px;
+  top:15px;
+  left:15px;
   background:var(--danger);
-  padding:4px 10px;
-  border-radius:10px;
-  font-size:12px;
-}
-
-.controls{
-  display:flex;
-  gap:12px;
-  flex-wrap:wrap;
-}
-
-.ctrl{
-  padding:12px 14px;
-  border-radius:14px;
-  background:var(--glass);
-  border:1px solid var(--border);
-  cursor:pointer;
-  transition:.25s;
-}
-
-.ctrl:hover{
-  transform:scale(1.05);
-  box-shadow:0 0 12px var(--accent33);
+  padding:4px 12px;
+  border-radius:8px;
+  font-size:11px;
+  font-weight: 800;
 }
 
 /* ================= CHAT PANEL ================= */
@@ -181,233 +179,215 @@ body{
 }
 
 .chat-header{
-  padding:14px;
+  padding:16px;
   border-bottom:1px solid var(--border);
-  font-weight:600;
+  font-weight:700;
+  display: flex;
+  justify-content: space-between;
 }
 
 .chat{
   flex:1;
-  padding:14px;
+  padding:16px;
   overflow-y:auto;
   font-size:13px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.msg{
-  margin-bottom:8px;
-}
-
-.msg span{
-  color:var(--accent);
-  font-weight:600;
-}
+.msg b{ color:var(--accent); }
+.msg.gift{ color: var(--gold); font-weight: 700; background: rgba(255,207,64,0.1); padding: 5px 10px; border-radius: 8px; }
 
 .chat-input{
   display:flex;
-  border-top:1px solid var(--border);
+  padding: 10px;
+  background: rgba(0,0,0,0.2);
 }
 
 .chat-input input{
   flex:1;
-  background:transparent;
-  border:none;
-  padding:14px;
+  background: var(--glass);
+  border:1px solid var(--border);
+  padding:12px;
+  border-radius: 12px;
   color:var(--text);
   outline:none;
 }
 
 .chat-input button{
-  padding:0 18px;
+  margin-left: 8px;
+  width: 45px;
+  border-radius: 12px;
   background:var(--accent);
   border:none;
   cursor:pointer;
   font-weight:600;
-  transition:.25s;
-}
-
-.chat-input button:hover{
-  transform:scale(1.05);
 }
 
 /* ================= STATS ================= */
 .stats{
   display:flex;
-  justify-content:space-around;
-  margin-bottom:12px;
-  font-size:13px;
+  gap: 10px;
 }
 
 .stat-box{
   background:var(--glass);
-  padding:12px 16px;
+  padding:12px;
   border-radius:14px;
   text-align:center;
   flex:1;
-  margin:0 4px;
 }
 
-.stat-box .label{font-size:11px;color:var(--muted);}
-.stat-box .value{font-weight:600;font-size:16px;}
+.stat-box .label{font-size:10px; color:var(--muted); text-transform: uppercase;}
+.stat-box .value{font-weight:800; font-size:18px; margin-top: 4px;}
 
-/* ================= FOOTER ================= */
-.footer{
-  height:44px;
-  text-align:center;
-  font-size:12px;
-  color:var(--muted);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  margin-top:10px;
+/* ================= GIFT TOAST ================= */
+#giftToast {
+    position: fixed;
+    top: 80px;
+    right: 420px;
+    background: var(--gold);
+    color: #000;
+    padding: 12px 20px;
+    border-radius: 15px;
+    font-weight: 800;
+    display: none;
+    z-index: 1000;
+    box-shadow: 0 10px 25px rgba(255,207,64,0.4);
+    animation: slideIn 0.4s ease-out;
 }
 
-/* ================= RESPONSIVE ================= */
-@media(max-width:1000px){
-  .app{
-    grid-template-columns:1fr;
-  }
-  .sidebar{
-    display:none;
-  }
-  .content{
-    grid-template-columns:1fr;
-  }
-}
+@keyframes slideIn { from { transform: translateX(30px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
 </style>
 </head>
 
 <body>
 
+<div id="giftToast">🎁 <span id="gUser"></span>: <span id="gName"></span></div>
+
 <div class="app">
 
-  <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="brand">HOLA LIVE</div>
     <div class="menu">
-      <button data-link="index.html">🏠 Нүүр</button>
-      <button data-link="moderator.html">🛡 Модератор</button>
-      <button data-link="live.html">🎥 Live</button>
+      <button onclick="location.href='index.html'">🏠 Нүүр хуудас</button>
+      <button class="active">🎥 Stream Dashboard</button>
+      <button onclick="location.href='store.html'">💎 Дэлгүүр</button>
+      <button onclick="location.href='profile.html'">👤 Профайл</button>
+      <button onclick="location.href='moderator.html'">🛡 Модератор</button>
     </div>
   </aside>
 
-  <!-- MAIN PANEL -->
   <div class="main">
     <div class="header">
-      <div>🎥 Streamer Dashboard</div>
+      <div style="font-weight: 700;">Стримэр: <span id="sName" style="color:var(--accent)">User</span></div>
       <div class="status">
         <div class="dot"></div>
-        LIVE
+        <span style="color:var(--danger)">ШУУД</span>
       </div>
     </div>
 
     <div class="content">
 
-      <!-- STREAM PANEL -->
       <div class="stream-panel">
         <div class="stream-preview"></div>
+        
         <div class="stats">
-          <div class="stat-box"><div class="label">Viewers</div><div class="value" id="viewerCount">0</div></div>
-          <div class="stat-box"><div class="label">Tokens</div><div class="value" id="tokenCount">0</div></div>
-          <div class="stat-box"><div class="label">VIP</div><div class="value" id="vipStatus">OFF</div></div>
+          <div class="stat-box"><div class="label">Үзэгчид</div><div class="value" id="viewerCount">0</div></div>
+          <div class="stat-box"><div class="label">Олсон Токен</div><div class="value" id="tokenCount" style="color:var(--ok)">0</div></div>
+          <div class="stat-box"><div class="label">VIP Mode</div><div class="value" id="vipStatus">OFF</div></div>
         </div>
-        <div class="controls">
-          <button class="ctrl" onclick="startStopLive()">⏯ Start/Stop</button>
-          <button class="ctrl" onclick="muteLive()">🔇 Mute</button>
-          <button class="ctrl" onclick="kickViewer()">🚫 Kick</button>
-          <button class="ctrl" onclick="toggleVIP()">🔒 VIP</button>
+
+        <div style="display: flex; gap: 10px;">
+          <button class="menu button" style="background:var(--danger); border:none; justify-content: center; margin:0;" onclick="alert('Live зогслоо')">Stop Stream</button>
+          <button class="menu button" style="background:var(--glass); justify-content: center; margin:0;" onclick="toggleVIP()">Toggle VIP Only</button>
         </div>
       </div>
 
-      <!-- CHAT PANEL -->
       <div class="chat-panel">
-        <div class="chat-header">Live Chat</div>
-        <div class="chat" id="chat" role="log" aria-live="polite"></div>
+        <div class="chat-header">Чат <span>ID: #8821</span></div>
+        <div class="chat" id="chat">
+            <div class="msg"><b>Систем:</b> Лайв чат холбогдлоо.</div>
+        </div>
         <form class="chat-input" id="chatForm">
-          <input id="msgInput" placeholder="Chat message..." autocomplete="off" required>
-          <button type="submit">→</button>
+          <input id="msgInput" placeholder="Чат бичих..." autocomplete="off">
+          <button type="submit">></button>
         </form>
       </div>
 
-    </div>
-
-    <div class="footer">
-      © 2026 Hola Live. Бүх эрх хуулиар хамгаалагдсан.
     </div>
   </div>
 
 </div>
 
+
+
 <script>
 (() => {
+    // 📊 GLOBAL STATE
+    const state = {
+        username: localStorage.getItem('hola_username') || "Streamer_One",
+        wallet: parseInt(localStorage.getItem('hola_wallet')) || 0,
+        viewers: 124,
+        isVIPMode: false
+    };
 
-/* ========= ROLE CHECK ========= */
-const RoleEngine = {
-    ROLES:{VIEWER:'viewer',STREAMER:'streamer',MODERATOR:'moderator'},
-    role:'streamer',
-    is(r){ return this.role===r; }
-};
+    const chatContainer = document.getElementById('chat');
+    const msgInput = document.getElementById('msgInput');
 
-if(!RoleEngine.is(RoleEngine.ROLES.STREAMER)){
-    alert("⚠️ Зөвхөн Streamer эрхтэй хэрэглэгч орж болно!");
-    window.location.href="index.html";
-}
+    // INITIAL RENDER
+    document.getElementById('sName').innerText = state.username;
+    document.getElementById('tokenCount').innerText = state.wallet.toLocaleString();
 
-/* ========= CHAT LOGIC ========= */
-const form = document.getElementById('chatForm');
-const input = document.getElementById('msgInput');
-const chat = document.getElementById('chat');
+    // 💬 CHAT LOGIC
+    document.getElementById('chatForm').addEventListener('submit', e => {
+        e.preventDefault();
+        const text = msgInput.value.trim();
+        if(!text) return;
 
-form.addEventListener('submit', e=>{
-  e.preventDefault();
-  const text = input.value.trim();
-  if(!text) return;
-  const msg = document.createElement('div');
-  msg.className='msg';
-  const user = document.createElement('span');
-  user.textContent='You:';
-  msg.appendChild(user);
-  msg.append(' '+text);
-  chat.appendChild(msg);
-  chat.scrollTop = chat.scrollHeight;
-  input.value='';
-});
+        addChatMessage(state.username, text);
+        msgInput.value = '';
+    });
 
-/* ========= STREAM CONTROLS ========= */
-const viewerCount = document.getElementById('viewerCount');
-const tokenCount = document.getElementById('tokenCount');
-const vipStatus = document.getElementById('vipStatus');
+    function addChatMessage(user, text, isGift = false) {
+        const div = document.createElement('div');
+        div.className = isGift ? 'msg gift' : 'msg';
+        div.innerHTML = `<b>${user}:</b> ${text}`;
+        chatContainer.appendChild(div);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
 
-let viewers = 0;
-let tokens = 0;
-let vip = false;
+    // 🎁 GIFT SYSTEM
+    function triggerGiftAlert(user, gift) {
+        const toast = document.getElementById('giftToast');
+        document.getElementById('gUser').innerText = user;
+        document.getElementById('gName').innerText = gift;
+        
+        toast.style.display = 'block';
+        addChatMessage(user, `илгээлээ: ${gift} 🎁`, true);
 
-function startStopLive(){
-  alert('🔴 Live toggled!');
-}
+        setTimeout(() => { toast.style.display = 'none'; }, 4000);
+    }
 
-function muteLive(){alert('Muted 🔇');}
-function kickViewer(){alert('Viewer kicked 🚫');}
-function toggleVIP(){
-  vip = !vip;
-  vipStatus.textContent = vip?'ON':'OFF';
-}
+    // ⚙️ CONTROLS
+    window.toggleVIP = () => {
+        state.isVIPMode = !state.isVIPMode;
+        document.getElementById('vipStatus').innerText = state.isVIPMode ? 'ON' : 'OFF';
+        document.getElementById('vipStatus').style.color = state.isVIPMode ? 'var(--ok)' : 'inherit';
+    };
 
-/* ========= SIMULATED LIVE METRICS ========= */
-setInterval(()=>{
-  viewers = Math.floor(Math.random()*150);
-  tokens = Math.floor(Math.random()*1000);
-  viewerCount.textContent = viewers;
-  tokenCount.textContent = tokens;
-},3000);
+    // 🔄 SIMULATED REAL-TIME UPDATES
+    setInterval(() => {
+        // Үзэгчдийн тоог бага зэрэг хөдөлгөх
+        state.viewers += Math.floor(Math.random() * 7) - 3;
+        document.getElementById('viewerCount').innerText = state.viewers;
+    }, 3000);
 
-/* ========= SAFE NAVIGATION ========= */
-document.querySelectorAll('[data-link]').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    const page = btn.dataset.link;
-    if(page) window.location.href = page;
-  });
-});
+    // Санамсаргүй бэлэг ирэх симуляци
+    setTimeout(() => triggerGiftAlert('Bold_99', 'Super Car 🏎️'), 5000);
+    setTimeout(() => triggerGiftAlert('Anu_B', 'Red Rose 🌹'), 15000);
 
 })();
 </script>
