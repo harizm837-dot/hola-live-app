@@ -1,0 +1,315 @@
+<div class="live-app">
+<style>
+    :root {
+        --neon-blue: #00f0ff;
+        --neon-pink: #ff00c8;
+        --glass-bg: rgba(0, 0, 0, 0.6);
+    }
+
+    .live-app {
+        position: relative;
+        height: 100vh;
+        background: #000;
+        font-family: 'Inter', sans-serif;
+        overflow: hidden;
+    }
+
+    /* 🎥 VIDEO & FILTERS */
+    #liveVideo {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transform: scaleX(-1); /* Mirror effect for streamer */
+        filter: contrast(1.1) brightness(1.1);
+    }
+
+    .video-overlay {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle, transparent 50%, rgba(0,0,0,0.4) 100%);
+        pointer-events: none;
+    }
+
+    /* 🏷️ TOP OVERLAY */
+    .top-bar {
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        z-index: 100;
+    }
+
+    .streamer-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: var(--glass-bg);
+        padding: 6px 15px 6px 6px;
+        border-radius: 40px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .live-indicator {
+        background: linear-gradient(90deg, #ff0055, #ff7700);
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 800;
+        animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(255, 0, 85, 0.7); }
+        70% { box-shadow: 0 0 0 10px rgba(255, 0, 85, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(255, 0, 85, 0); }
+    }
+
+    /* 💎 WALLET & COMBO */
+    .token-display {
+        background: var(--glass-bg);
+        padding: 10px 20px;
+        border-radius: 25px;
+        border: 1px solid var(--neon-blue);
+        color: var(--neon-blue);
+        font-weight: 800;
+        box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .combo-badge {
+        position: absolute;
+        top: 80px;
+        right: 20px;
+        font-size: 32px;
+        font-weight: 900;
+        color: #fff;
+        text-shadow: 0 0 20px var(--neon-pink);
+        font-style: italic;
+        transform: scale(0);
+        transition: 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .combo-badge.active { transform: scale(1.2) rotate(-10deg); }
+
+    /* 💬 MODERN CHAT */
+    .chat-area {
+        position: absolute;
+        bottom: 100px;
+        left: 20px;
+        width: 75%;
+        max-height: 250px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        mask-image: linear-gradient(transparent, black 20%);
+        overflow-y: auto;
+        padding-right: 10px;
+    }
+
+    .chat-bubble {
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+        padding: 8px 15px;
+        border-radius: 15px;
+        border-left: 3px solid var(--neon-blue);
+        font-size: 13px;
+        width: fit-content;
+        animation: messageSlide 0.3s ease-out forwards;
+    }
+
+    @keyframes messageSlide {
+        from { opacity: 0; transform: translateX(-20px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* 🕹️ CONTROLS */
+    .side-controls {
+        position: absolute;
+        right: 20px;
+        bottom: 100px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .ctrl-btn {
+        width: 55px; height: 55px;
+        border-radius: 50%;
+        background: var(--glass-bg);
+        border: 1px solid rgba(255,255,255,0.2);
+        color: #fff;
+        font-size: 20px;
+        cursor: pointer;
+        transition: 0.3s;
+        backdrop-filter: blur(10px);
+    }
+
+    .ctrl-btn:hover {
+        border-color: var(--neon-blue);
+        box-shadow: 0 0 20px var(--neon-blue);
+        transform: scale(1.1);
+    }
+
+    .gift-btn {
+        background: linear-gradient(45deg, var(--neon-pink), #ff5500);
+        border: none;
+    }
+
+    /* ⌨️ INPUT */
+    .input-wrapper {
+        position: absolute;
+        bottom: 30px;
+        left: 20px;
+        right: 20px;
+        display: flex;
+        gap: 10px;
+    }
+
+    .input-wrapper input {
+        flex: 1;
+        background: var(--glass-bg);
+        border: 1px solid rgba(255,255,255,0.2);
+        padding: 12px 20px;
+        border-radius: 30px;
+        color: #fff;
+        outline: none;
+        backdrop-filter: blur(10px);
+    }
+
+    /* 📊 DASHBOARD PANEL */
+    .stream-dash {
+        position: absolute;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(10, 15, 30, 0.95);
+        padding: 30px;
+        border-radius: 25px;
+        border: 1px solid var(--neon-blue);
+        z-index: 1000;
+        display: none;
+        min-width: 280px;
+        text-align: center;
+    }
+</style>
+
+<video id="liveVideo" autoplay muted playsinline></video>
+<div class="video-overlay"></div>
+
+<div class="top-bar">
+    <div class="streamer-info">
+        <div class="live-indicator">LIVE</div>
+        <div style="font-size: 14px; font-weight: 600;">@Hola_Official <span style="opacity:0.6; font-size:11px;">👁 <span id="viewers">120</span></span></div>
+    </div>
+    <div class="token-display">
+        💎 <span id="walletAmt">0</span>
+    </div>
+</div>
+
+<div class="combo-badge" id="comboTag">X1 COMBO!</div>
+
+<div class="chat-area" id="chatContainer">
+    <div class="chat-bubble"><b>System:</b> Стрим амжилттай эхэллээ! 🚀</div>
+</div>
+
+<div class="side-controls">
+    <button class="ctrl-btn gift-btn" onclick="triggerGift()">🎁</button>
+    <button class="ctrl-btn" onclick="toggleDash()">📊</button>
+    <button class="ctrl-btn" onclick="location.reload()">🔄</button>
+    <button class="ctrl-btn" onclick="navigateTo('home.html')">🚪</button>
+</div>
+
+<div class="input-wrapper">
+    <input type="text" id="userMsg" placeholder="Мессеж бичих..." onkeypress="if(event.key==='Enter') sendMsg()">
+    <button class="ctrl-btn" style="width:45px; height:45px;" onclick="sendMsg()">🚀</button>
+</div>
+
+<div class="stream-dash" id="streamDash">
+    <h3 style="color: var(--neon-blue);">Stream Analytics</h3>
+    <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin:15px 0;">
+    <p>Нийт Токен: <span id="dashTotal" style="color: gold;">0</span></p>
+    <p>Комбо дээд: <span id="dashMax">0</span></p>
+    <br>
+    <button class="ctrl-btn" style="width: 100%; border-radius: 10px;" onclick="toggleDash()">ХААХ</button>
+</div>
+
+
+
+<script>
+    let wallet = parseInt(localStorage.getItem("hola_wallet")) || 0;
+    let combo = 0;
+    let maxCombo = 0;
+    let comboTimer;
+
+    // Camera Init
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        .then(s => document.getElementById("liveVideo").srcObject = s)
+        .catch(() => console.log("Camera blocked"));
+
+    function updateUI() {
+        document.getElementById("walletAmt").innerText = wallet.toLocaleString();
+        document.getElementById("dashTotal").innerText = wallet.toLocaleString();
+        document.getElementById("dashMax").innerText = maxCombo;
+    }
+
+    function triggerGift() {
+        combo++;
+        if(combo > maxCombo) maxCombo = combo;
+        
+        // Combo UI logic
+        const tag = document.getElementById("comboTag");
+        tag.innerText = `X${combo} COMBO!`;
+        tag.classList.add("active");
+        
+        clearTimeout(comboTimer);
+        comboTimer = setTimeout(() => {
+            combo = 0;
+            tag.classList.remove("active");
+        }, 3000);
+
+        // Economy
+        wallet += (50 * combo);
+        localStorage.setItem("hola_wallet", wallet);
+        updateUI();
+
+        // Chat notification
+        addChat("System", `Бэлэг хүлээн авлаа! +${50*combo} 💎`, "#ffcc00");
+    }
+
+    function sendMsg() {
+        const input = document.getElementById("userMsg");
+        if(!input.value.trim()) return;
+        addChat("You", input.value);
+        input.value = "";
+    }
+
+    function addChat(user, text, color = "#fff") {
+        const cont = document.getElementById("chatContainer");
+        const div = document.createElement("div");
+        div.className = "chat-bubble";
+        div.innerHTML = `<b style="color:${color}">${user}:</b> ${text}`;
+        cont.appendChild(div);
+        cont.scrollTop = cont.scrollHeight;
+        if(cont.children.length > 10) cont.children[0].remove();
+    }
+
+    function toggleDash() {
+        const d = document.getElementById("streamDash");
+        d.style.display = d.style.display === "block" ? "none" : "block";
+    }
+
+    // Auto update UI on load
+    updateUI();
+
+    // Viewer Simulation
+    setInterval(() => {
+        document.getElementById("viewers").innerText = 120 + Math.floor(Math.random()*40);
+    }, 4000);
+</script>
+</div>
