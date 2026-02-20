@@ -1,138 +1,364 @@
 <!DOCTYPE html>
 <html lang="mn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hola Live · Store</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hola Live · Дэлгүүр</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0b0f1a;
+            --panel: #12182b;
+            --glass: rgba(255, 255, 255, 0.08);
+            --border: rgba(255, 255, 255, 0.15);
+            --text: #eaf6ff;
+            --muted: #9bb0c9;
+            --accent: #7df9ff;
+            --danger: #ff3344;
+            --ok: #4dff88;
+            --gold: #ffcf40;
+            --accent-gradient: linear-gradient(90deg, #7df9ff, #00d2ff);
+            --accent-glow: 0 0 25px rgba(125, 249, 255, 0.3);
+        }
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at top, #141b33, #05070f 65%);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
-<style>
-:root{
-  --bg:#0b0f1a;
-  --panel:#12182b;
-  --glass:rgba(255,255,255,0.08);
-  --border:rgba(255,255,255,0.15);
-  --text:#eaf6ff;
-  --muted:#9bb0c9;
-  --accent:#7df9ff;
-  --danger:#ff3344;
-  --ok:#4dff88;
-}
+        .store-container {
+            padding: 40px 20px;
+            max-width: 900px;
+            margin: 0 auto;
+            animation: fadeIn 0.5s ease;
+        }
 
-body{margin:0;font-family:'Inter',sans-serif;background:radial-gradient(circle at top,#141b33,#05070f 65%);color:var(--text);min-height:100vh;}
-.app{display:grid;grid-template-columns:260px 1fr;min-height:100vh;}
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-.sidebar{background:linear-gradient(180deg,#0d1224,#070a14);padding:20px;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:20px;}
-.brand{font-family:'Montserrat',sans-serif;font-size:22px;font-weight:800;background:linear-gradient(90deg,var(--accent),#ff4fd8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.menu button{width:100%;padding:14px 16px;margin-bottom:10px;border-radius:16px;background:var(--glass);border:1px solid var(--border);color:var(--text);text-align:left;cursor:pointer;font-weight:600;transition:.25s;}
-.menu button:hover{transform:translateX(6px);}
+        /* 💎 STORE HEADER */
+        .store-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, var(--panel), #1a223a);
+            padding: 25px;
+            border-radius: 28px;
+            border: 1px solid var(--border);
+            box-shadow: var(--accent-glow);
+        }
 
-.main{display:flex;flex-direction:column;}
-.header{height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;border-bottom:1px solid var(--border);}
-.status{display:flex;gap:10px;align-items:center;font-size:14px;}
-.dot{width:10px;height:10px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok);}
+        .store-title h2 { font-family: 'Montserrat', sans-serif; margin: 0; font-size: 24px; }
+        .store-title p { font-size: 13px; color: var(--muted); margin: 0; }
 
-.content{flex:1;padding:20px;display:grid;grid-template-columns:1fr;gap:20px;}
+        .user-wallet {
+            background: var(--accent-gradient);
+            color: #000;
+            padding: 12px 25px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 20px rgba(125, 249, 255, 0.3);
+        }
 
-/* ================= STORE GRID ================= */
-.store-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:20px;}
-.item-card{background:var(--panel);border-radius:24px;padding:16px;border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;text-align:center;transition:.3s;cursor:pointer;}
-.item-card:hover{transform:scale(1.05);box-shadow:0 0 20px var(--accent);}
-.item-card img{width:80px;height:80px;margin-bottom:12px;border-radius:12px;}
-.item-card h4{margin:8px 0;font-weight:600;}
-.item-card .price{font-weight:700;margin-bottom:10px;}
-.item-card button{padding:6px 12px;border:none;border-radius:12px;background:var(--accent);color:#000;font-weight:600;cursor:pointer;transition:.25s;}
-.item-card button:hover{background:#00eaff;box-shadow:0 0 15px #00eaff;}
+        /* 🔖 TABS */
+        .store-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
 
-/* FOOTER */
-.footer{height:44px;text-align:center;font-size:12px;color:var(--muted);display:flex;align-items:center;justify-content:center;margin-top:10px;}
-</style>
+        .tab-btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: 18px;
+            border: 1px solid var(--border);
+            background: var(--glass);
+            color: var(--muted);
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .tab-btn.active {
+            background: var(--accent);
+            color: #000;
+            border-color: var(--accent);
+            box-shadow: 0 0 15px rgba(125, 249, 255, 0.4);
+        }
+
+        /* 🛍️ GRID */
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        .shop-card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 25px 20px;
+            text-align: center;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        .shop-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent);
+            box-shadow: var(--accent-glow);
+        }
+
+        .item-icon { font-size: 50px; margin-bottom: 15px; display: block; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3)); }
+        .item-name { font-weight: 800; font-size: 16px; margin-bottom: 5px; color: #fff; }
+        .item-price {
+            font-family: 'Montserrat';
+            color: var(--accent);
+            font-weight: 800;
+            font-size: 15px;
+            background: rgba(125, 249, 255, 0.1);
+            padding: 5px 12px;
+            border-radius: 10px;
+            display: inline-block;
+            margin: 10px 0 20px;
+        }
+
+        .buy-btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 15px;
+            border: none;
+            background: var(--glass);
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .shop-card:hover .buy-btn { background: var(--accent); color: #000; }
+
+        .vip-tag {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--gold);
+            color: #000;
+            font-size: 10px;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-weight: 900;
+            box-shadow: 0 0 15px rgba(255, 207, 64, 0.4);
+        }
+
+        /* 💳 PAYMENT MODAL */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .payment-card {
+            background: #12182b;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 32px;
+            border: 1px solid var(--border);
+            padding: 30px;
+            position: relative;
+        }
+
+        .gateway-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 20px;
+            border-radius: 20px;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            margin-bottom: 12px;
+            transition: 0.3s;
+        }
+
+        .gateway-item:hover { border-color: var(--accent); background: rgba(125, 249, 255, 0.1); }
+        .gateway-logo { width: 40px; height: 40px; border-radius: 10px; }
+
+        #qrSection { display: none; text-align: center; }
+        .qr-placeholder { background: #fff; padding: 10px; border-radius: 15px; margin: 20px auto; width: 180px; }
+
+    </style>
 </head>
-
 <body>
 
-<div class="app">
-
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="brand">HOLA LIVE</div>
-    <div class="menu">
-      <button data-link="index.html">🏠 Нүүр</button>
-      <button data-link="live.html">🎥 Live</button>
-      <button data-link="ledger.html">💎 Ledger</button>
-    </div>
-  </aside>
-
-  <!-- MAIN PANEL -->
-  <div class="main">
-    <div class="header">
-      <div>🛒 Store</div>
-      <div class="status"><div class="dot"></div> LIVE</div>
-    </div>
-
-    <div class="content">
-
-      <div class="panel">
-        <h3>Available Items</h3>
-        <div class="store-grid" id="storeGrid">
-          <!-- Items populated via JS -->
+<div class="store-container">
+    <div class="store-header">
+        <div class="store-title">
+            <h2>Hola Market</h2>
+            <p>Токен цэнэглэх ба Бэлэг авах</p>
         </div>
-      </div>
-
+        <div class="user-wallet">
+            <span>💎</span> <span id="walletDisp">0</span>
+        </div>
     </div>
 
-    <div class="footer">
-      © 2026 Hola Live. Бүх эрх хуулиар хамгаалагдсан.
+    <div class="store-tabs">
+        <button class="tab-btn active" id="tokenTab" onclick="renderMarket('tokens', this)">💎 Цэнэглэх</button>
+        <button class="tab-btn" onclick="renderMarket('gifts', this)">🎁 Бэлэг авах</button>
     </div>
-  </div>
 
+    <div class="shop-grid" id="marketGrid"></div>
+</div>
+
+<div id="paymentModal" class="modal-overlay">
+    <div class="payment-card">
+        <button onclick="closePayment()" style="position:absolute; top:20px; right:20px; background:none; border:none; color:#fff; font-size:24px; cursor:pointer;">&times;</button>
+        
+        <div id="selectionSection">
+            <h3 style="text-align:center; margin-top:0;">Төлбөр төлөх</h3>
+            <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:15px; margin-bottom:20px; display:flex; justify-content:space-between;">
+                <div><span style="font-size:12px; color:var(--muted);">Багц:</span><br><b id="itemNameDisp" style="color:var(--accent);"></b></div>
+                <div style="text-align:right;"><span style="font-size:12px; color:var(--muted);">Дүн:</span><br><b id="itemPriceDisp"></b></div>
+            </div>
+
+            <div class="gateway-item" onclick="showQR('QPay')">
+                <img src="https://itools.mn/wp-content/uploads/2019/12/qpay.png" class="gateway-logo">
+                <div><b>QPay</b><br><small style="color:var(--muted);">Бүх банкны апп</small></div>
+            </div>
+            <div class="gateway-item" onclick="showQR('SocialPay')">
+                <img src="https://m.gala.mn/uploads/gala/socialpay.png" class="gateway-logo">
+                <div><b>SocialPay</b><br><small style="color:var(--muted);">Голомт банк</small></div>
+            </div>
+        </div>
+
+        <div id="qrSection">
+            <h3 id="gatewayTitle">QR Code</h3>
+            <div class="qr-placeholder">
+                <img id="qrImg" src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=HolaPayment" style="width:100%;">
+            </div>
+            <p style="color:var(--ok); font-size:12px;">🕒 Төлбөр хүлээж байна...</p>
+            <button class="buy-btn" onclick="backToSelection()">Буцах</button>
+        </div>
+    </div>
 </div>
 
 <script>
-(() => {
+    const userState = {
+        tokens: parseInt(localStorage.getItem('hola_wallet')) || 1200,
+        isVIP: localStorage.getItem('is_vip') === 'true' || true
+    };
 
-// ===== DUMMY ITEMS =====
-const storeItems=[
-  {id:1,name:"Gift Pack",img:"https://dummyimage.com/100x100/0077ff/fff.png&text=Gift",price:50},
-  {id:2,name:"Token Bundle",img:"https://dummyimage.com/100x100/00ffaa/fff.png&text=Tokens",price:100},
-  {id:3,name:"VIP Access",img:"https://dummyimage.com/100x100/ffbb00/fff.png&text=VIP",price:200},
-  {id:4,name:"Super Gift",img:"https://dummyimage.com/100x100/ff33aa/fff.png&text=Gift+",price:80}
-];
+    const shopData = {
+        tokens: [
+            { id: 't1', name: 'Starter Kit', amount: 100, price: 5000, icon: '💎' },
+            { id: 't2', name: 'Pro Pack', amount: 1000, price: 45000, icon: '🔥' },
+            { id: 't3', name: 'Whale stash', amount: 5000, price: 200000, icon: '🐋' }
+        ],
+        gifts: [
+            { id: 'g1', name: 'Сарнай', price: 10, icon: '🌹' },
+            { id: 'g2', name: 'Супер Машин', price: 2000, icon: '🏎️' },
+            { id: 'g3', name: 'Сансрын хөлөг', price: 5000, icon: '🚀' }
+        ]
+    };
 
-const storeGrid=document.getElementById('storeGrid');
+    let currentItem = null;
 
-storeItems.forEach(item=>{
-  const card=document.createElement('div');
-  card.className='item-card';
-  card.innerHTML=`<img src="${item.img}" alt="${item.name}">
-                    <h4>${item.name}</h4>
-                    <div class="price">${item.price} 💎</div>
-                    <button data-id="${item.id}">Buy</button>`;
-  storeGrid.appendChild(card);
-});
-
-// ===== BUY BUTTON =====
-document.querySelectorAll('.item-card button').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    const id=parseInt(btn.dataset.id);
-    const item=storeItems.find(i=>i.id===id);
-    if(!item) return;
-    // EconomyEngine simulation
-    if(confirm(`✅ ${item.name} авъя (${item.price} 💎)?`)){
-      alert(`🎉 Та ${item.name}-г авлаа!`);
+    function refreshUI() {
+        document.getElementById('walletDisp').innerText = userState.tokens.toLocaleString();
+        localStorage.setItem('hola_wallet', userState.tokens);
     }
-  });
-});
 
-// ===== SAFE NAVIGATION =====
-document.querySelectorAll('[data-link]').forEach(btn=>{
-  btn.addEventListener('click',()=>{const page=btn.dataset.link;if(page)window.location.href=page;});
-});
+    function renderMarket(category, btn) {
+        if(btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+        
+        const grid = document.getElementById('marketGrid');
+        grid.innerHTML = '';
 
-})();
+        shopData[category].forEach(item => {
+            const isToken = category === 'tokens';
+            let price = item.price;
+            if(!isToken && userState.isVIP) price = Math.floor(price * 0.8);
+
+            grid.innerHTML += `
+                <div class="shop-card">
+                    ${(!isToken && userState.isVIP) ? '<span class="vip-tag">VIP -20%</span>' : ''}
+                    <span class="item-icon">${item.icon}</span>
+                    <span class="item-name">${item.name}</span>
+                    <span class="item-price">${isToken ? price.toLocaleString()+'₮' : '💎 '+price}</span>
+                    <button class="buy-btn" onclick="handleAction('${category}', '${item.id}')">
+                        ${isToken ? 'Цэнэглэх' : 'Авах'}
+                    </button>
+                </div>
+            `;
+        });
+    }
+
+    function handleAction(category, id) {
+        const item = shopData[category].find(i => i.id === id);
+        if(category === 'tokens') {
+            currentItem = item;
+            document.getElementById('itemNameDisp').innerText = item.name;
+            document.getElementById('itemPriceDisp').innerText = item.price.toLocaleString() + '₮';
+            document.getElementById('paymentModal').style.display = 'flex';
+        } else {
+            let price = userState.isVIP ? Math.floor(item.price * 0.8) : item.price;
+            if(userState.tokens >= price) {
+                userState.tokens -= price;
+                alert(`✅ Баяр хүргэе! ${item.name} авлаа.`);
+                refreshUI();
+            } else {
+                alert('❌ Токен хүрэлцэхгүй байна!');
+            }
+        }
+    }
+
+    function showQR(gateway) {
+        document.getElementById('selectionSection').style.display = 'none';
+        document.getElementById('qrSection').style.display = 'block';
+        document.getElementById('gatewayTitle').innerText = gateway + ' QR';
+        
+        // Simulation: Auto success after 4s
+        setTimeout(() => {
+            if(document.getElementById('qrSection').style.display === 'block') {
+                userState.tokens += currentItem.amount;
+                refreshUI();
+                alert(`💎 Амжилттай! ${currentItem.amount} токен нэмэгдлээ.`);
+                closePayment();
+            }
+        }, 4000);
+    }
+
+    function backToSelection() {
+        document.getElementById('selectionSection').style.display = 'block';
+        document.getElementById('qrSection').style.display = 'none';
+    }
+
+    function closePayment() {
+        document.getElementById('paymentModal').style.display = 'none';
+        backToSelection();
+    }
+
+    // Init
+    refreshUI();
+    renderMarket('tokens');
 </script>
 
 </body>
