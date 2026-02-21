@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Hola Live | Тансаг Зэрэглэлийн Стрим Платформ</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0a192f">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #00f2ff; /* Илүү хурц неон */
+            --secondary: #7000ff; /* Тансаг нил ягаан */
+            --bg-gradient: radial-gradient(circle at center, #111d35 0%, #050a14 100%);
+            --glass: rgba(255, 255, 255, 0.05);
+            --text-main: #e6f1ff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        
+        body { 
+            background: #050a14;
+            background-image: var(--bg-gradient);
+            color: var(--text-main); 
+            overflow: hidden; 
+            height: 100vh;
+        }
+
+        /* Арын фонны гэрэлтэлтүүд - Илүү зөөлөн, өнгөлөг */
+        .glow-sphere {
+            position: fixed;
+            width: 60vw; height: 60vw;
+            background: radial-gradient(circle, rgba(0, 242, 255, 0.07) 0%, transparent 70%);
+            top: -10%; right: -10%;
+            z-index: -1;
+            filter: blur(80px);
+        }
+
+        .glow-sphere-2 {
+            position: fixed;
+            width: 50vw; height: 50vw;
+            background: radial-gradient(circle, rgba(112, 0, 255, 0.05) 0%, transparent 70%);
+            bottom: -5%; left: -5%;
+            z-index: -1;
+            filter: blur(80px);
+        }
+
+        #intro {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            backdrop-filter: blur(5px);
+            transition: all 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        #intro.hide {
+            opacity: 0;
+            transform: scale(1.1);
+            filter: blur(30px);
+            pointer-events: none;
+        }
+
+        /* Hola Live Logo - Илүү гэрэлтсэн, цэвэрхэн */
+        #logo {
+            font-size: clamp(3rem, 12vw, 5rem);
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to bottom, #fff 30%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 30px rgba(0, 242, 255, 0.3));
+        }
+
+        #logo span {
+            display: inline-block;
+            animation: emerge 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            opacity: 0;
+            filter: blur(10px);
+        }
+
+        @keyframes emerge {
+            to { opacity: 1; filter: blur(0); transform: translateY(0); }
+        }
+
+        .tagline {
+            font-size: 0.8rem;
+            color: var(--primary);
+            letter-spacing: 0.6em;
+            margin-bottom: 4rem;
+            font-weight: 600;
+            opacity: 0.8;
+            text-transform: uppercase;
+        }
+
+        /* "Enter" Button - Premium Glass Effect */
+        #enterBtn {
+            position: relative;
+            padding: 1.4rem 4.5rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(25px);
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 800;
+            letter-spacing: 0.2em;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        #enterBtn:hover {
+            background: var(--primary);
+            color: #050a14;
+            border-color: var(--primary);
+            box-shadow: 0 0 50px rgba(0, 242, 255, 0.4);
+            transform: translateY(-5px);
+        }
+
+        canvas { position: absolute; top: 0; left: 0; z-index: 1; pointer-events: none; }
+
+        footer {
+            position: fixed;
+            bottom: 40px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="glow-sphere"></div>
+    <div class="glow-sphere-2"></div>
+
+    <div id="intro">
+        <h1 id="logo">
+            <span>H</span><span>o</span><span>l</span><span>a</span>
+            <span>&nbsp;</span>
+            <span>L</span><span>i</span><span>v</span><span>e</span>
+        </h1>
+        
+        <div class="tagline">STREAM • TOKEN • ENERGY</div>
+        <button id="enterBtn">НЭВТРЭХ</button>
+    </div>
+
+    <canvas id="scene"></canvas>
+
+    <footer>© 2026 Hola Live. Бүх эрх хуулиар хамгаалагдсан.</footer>
+
+    <script>
+        // Logo Animation Delay
+        document.querySelectorAll("#logo span").forEach((s, i) => {
+            s.style.animationDelay = `${i * 0.08}s`;
+        });
+
+        // THREE.JS - Илүү гэрэлтсэн, тунгалаг эффект
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({
+            canvas: document.getElementById("scene"),
+            alpha: true,
+            antialias: true
+        });
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        camera.position.z = 4.5;
+
+        // Гол объект - Crystal Icosahedron
+        const geometry = new THREE.IcosahedronGeometry(1.5, 2);
+        const material = new THREE.MeshPhysicalMaterial({
+            color: 0x00f2ff,
+            metalness: 0.2,
+            roughness: 0.1,
+            transmission: 0.9, // Шил шиг тунгалаг
+            thickness: 0.5,
+            wireframe: true
+        });
+        const mesh = new THREE.Mesh(geometry, material);
+        scene.add(mesh);
+
+        // Particle System - Илүү олон, жижиг гэрлүүд
+        const pGeometry = new THREE.BufferGeometry();
+        const pCount = 2500;
+        const pCoords = new Float32Array(pCount * 3);
+        for(let i=0; i < pCount * 3; i++) { pCoords[i] = (Math.random() - 0.5) * 15; }
+        pGeometry.setAttribute("position", new THREE.BufferAttribute(pCoords, 3));
+        const pMaterial = new THREE.PointsMaterial({ size: 0.015, color: 0x7000ff, transparent: true, opacity: 0.6 });
+        const particles = new THREE.Points(pGeometry, pMaterial);
+        scene.add(particles);
+
+        // Lights
+        const light1 = new THREE.PointLight(0x00f2ff, 50); light1.position.set(5, 5, 5); scene.add(light1);
+        const light2 = new THREE.PointLight(0x7000ff, 30); light2.position.set(-5, -5, 5); scene.add(light2);
+        scene.add(new THREE.AmbientLight(0xffffff, 0.4));
+
+        function animate() {
+            const time = Date.now() * 0.0005;
+            mesh.rotation.y = time * 0.2;
+            mesh.rotation.x = time * 0.1;
+            particles.rotation.y = time * 0.05;
+            mesh.position.y = Math.sin(time * 1.5) * 0.2;
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // Mouse Move Interaction
+        window.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 0.5;
+            const y = (e.clientY / window.innerHeight - 0.5) * 0.5;
+            camera.position.x += (x - camera.position.x) * 0.05;
+            camera.position.y += (-y - camera.position.y) * 0.05;
+        });
+
+        // Enter Action
+        document.getElementById("enterBtn").addEventListener("click", () => {
+            document.getElementById("intro").classList.add("hide");
+            setTimeout(() => { window.location.href = "app.html"; }, 1000);
+        });
+
+        window.addEventListener("resize", () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
