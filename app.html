@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hola Live · Next-Gen Streaming</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#05070f">
+    <link rel="apple-touch-icon" href="assets/img/logo-192.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Montserrat:wght@800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #05070f;
+            --panel: #0d1224;
+            --glass: rgba(255, 255, 255, 0.06);
+            --border: rgba(255, 255, 255, 0.12);
+            --accent: #7df9ff;
+            --gold: #ffcf40;
+            --text: #eaf6ff;
+            --muted: #8a99ad;
+            --sidebar-w: 260px;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* 🚪 SIDEBAR NAVIGATION */
+        .sidebar {
+            width: var(--sidebar-w);
+            background: linear-gradient(180deg, #0d1224, #05070f);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 30px 15px;
+            transition: 0.3s;
+            z-index: 1000;
+        }
+
+        .brand {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--accent), #ff4fd8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 35px;
+            padding-left: 15px;
+        }
+
+        .nav-group { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+
+        .nav-item {
+            padding: 14px 18px;
+            border-radius: 18px;
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--muted);
+            text-decoration: none;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: 0.2s;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .nav-item:hover { background: var(--glass); color: var(--text); }
+        .nav-item.active {
+            background: var(--accent);
+            color: #000;
+            box-shadow: 0 8px 20px rgba(125, 249, 255, 0.15);
+        }
+
+        .nav-item.vip-active { border-color: var(--gold); color: var(--gold); }
+        .nav-item.vip-active:hover { background: rgba(255, 207, 64, 0.1); }
+
+        /* 🕹️ MAIN VIEWPORT */
+        .viewport {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background: radial-gradient(circle at top right, #101835, #05070f);
+        }
+
+        /* ⚡ HEADER */
+        .app-header {
+            height: 75px;
+            padding: 0 35px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            background: rgba(5, 7, 15, 0.4);
+            backdrop-filter: blur(15px);
+        }
+
+        .page-info h1 { font-size: 18px; margin: 0; font-weight: 800; color: var(--text); }
+
+        .user-hub { display: flex; align-items: center; gap: 15px; }
+
+        .token-pill {
+            background: var(--glass);
+            padding: 8px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 800;
+            color: var(--gold);
+            cursor: pointer;
+        }
+
+        .profile-btn {
+            width: 42px; height: 42px;
+            border-radius: 12px;
+            background: var(--accent);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; color: #000;
+            cursor: pointer;
+            border: none;
+        }
+
+        /* 🖼️ IFRAME CONTAINER */
+        .content-frame {
+            flex: 1;
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: transparent;
+        }
+
+        /* 📢 GLOBAL NOTIFICATION */
+        #globalToast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            padding: 16px 30px;
+            background: var(--panel);
+            color: var(--text);
+            border-radius: 20px;
+            border: 1px solid var(--accent);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+            font-weight: 600;
+            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 9999;
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        /* 📱 RESPONSIVE */
+        @media (max-width: 1000px) {
+            .sidebar { width: 85px; padding: 25px 10px; }
+            .brand, .nav-item span { display: none; }
+            .nav-item { justify-content: center; padding: 18px; font-size: 20px; }
+            .app-header { padding: 0 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="brand">HOLA</div>
+        <nav class="nav-group">
+            <div class="nav-item active" onclick="loadPage('index.html', 'Нүүр хуудас', this)">🏠 <span>Нүүр</span></div>
+            <div class="nav-item" onclick="loadPage('streamer.html', 'Стримэр самбар', this)">🎥 <span>Стримэр</span></div>
+            <div class="nav-item vip-link" onclick="loadPage('vip.html', 'VIP Өрөө', this)">👑 <span>VIP Room</span></div>
+            <div class="nav-item" onclick="loadPage('store.html', 'Токен дэлгүүр', this)">💎 <span>Дэлгүүр</span></div>
+            <div class="nav-item" onclick="loadPage('profile.html', 'Миний профайл', this)">👤 <span>Профайл</span></div>
+        </nav>
+        <div style="font-size: 11px; color: var(--muted); text-align: center; opacity: 0.5;">Ver 2.5.0</div>
+    </aside>
+
+    <main class="viewport">
+        <header class="app-header">
+            <div class="page-info">
+                <h1 id="currentTitle">Нүүр хуудас</h1>
+            </div>
+            
+            <div class="user-hub">
+                <div id="vipTag" style="display:none; font-size: 10px; font-weight: 900; background: var(--gold); color: #000; padding: 4px 8px; border-radius: 6px;">VIP</div>
+                <div class="token-pill" onclick="loadPage('store.html', 'Токен дэлгүүр', null)">
+                    <span>💎</span> <span id="balanceTxt">0</span>
+                </div>
+                <button class="profile-btn" id="userInitial" onclick="loadPage('profile.html', 'Миний профайл', null)">U</button>
+            </div>
+        </header>
+
+        <iframe id="mainFrame" src="index.html" class="content-frame"></iframe>
+    </main>
+
+    <div id="globalToast">
+        <span id="toastIcon">✨</span>
+        <span id="toastMsg">Мэдэгдэл</span>
+    </div>
+
+<script>
+    // 🌐 GLOBAL STATE ENGINE
+    const App = {
+        elements: {
+            frame: document.getElementById('mainFrame'),
+            title: document.getElementById('currentTitle'),
+            balance: document.getElementById('balanceTxt'),
+            initial: document.getElementById('userInitial'),
+            vipTag: document.getElementById('vipTag'),
+            toast: document.getElementById('globalToast'),
+            toastMsg: document.getElementById('toastMsg')
+        },
+
+        // Sync data from LocalStorage
+        sync() {
+            const wallet = localStorage.getItem('hola_wallet') || "0";
+            const user = localStorage.getItem('hola_username') || "User";
+            const isVIP = localStorage.getItem('is_vip') === 'true';
+
+            this.elements.balance.innerText = parseInt(wallet).toLocaleString();
+            this.elements.initial.innerText = user.charAt(0).toUpperCase();
+            this.elements.vipTag.style.display = isVIP ? 'block' : 'none';
+        },
+
+        // Page navigation
+        navigate(url, title, el) {
+            this.elements.frame.src = url;
+            this.elements.title.innerText = title;
+
+            if(el) {
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                el.classList.add('active');
+            }
+        },
+
+        // Fancy Notification
+        notify(msg, icon = "✨") {
+            this.elements.toastMsg.innerText = msg;
+            document.getElementById('toastIcon').innerText = icon;
+            this.elements.toast.style.transform = 'translateX(-50%) translateY(0)';
+            
+            setTimeout(() => {
+                this.elements.toast.style.transform = 'translateX(-50%) translateY(100px)';
+            }, 3500);
+        }
+    };
+
+    // External Access for Iframes
+    window.loadPage = (url, title, el) => App.navigate(url, title, el);
+    window.pushNotify = (msg, icon) => App.notify(msg, icon);
+
+    // Initial Load & PWA
+    window.onload = () => {
+        App.sync();
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').then(() => console.log("PWA Active"));
+        }
+        
+        // Welcome message
+        setTimeout(() => App.notify(`Тавтай морил, ${localStorage.getItem('hola_username') || 'Хэрэглэгч'}!`, "👋"), 1500);
+    };
+
+    // Auto-sync listener (When storage changes in other iframes)
+    window.addEventListener('storage', () => App.sync());
+    setInterval(() => App.sync(), 2000); // Pulse sync
+
+</script>
+</body>
+</html>
