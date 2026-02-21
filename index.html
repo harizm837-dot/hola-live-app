@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Hola Live | Stream Next Gen</title>
+    <link rel="manifest" href="manifest.json">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
+    <style>
+        :root { --primary: #00f2ff; --bg: #030816; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+        body { background: var(--bg); color: #fff; overflow: hidden; height: 100vh; }
+        .bg-overlay {
+            position: fixed; inset: 0;
+            background: radial-gradient(circle at 20% 30%, rgba(0, 242, 255, 0.15), transparent 40%),
+                        radial-gradient(circle at 80% 70%, rgba(112, 0, 255, 0.1), transparent 50%);
+            z-index: -1;
+        }
+        #intro {
+            position: fixed; inset: 0; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; z-index: 10;
+            transition: 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #intro.hide { opacity: 0; transform: scale(1.1); pointer-events: none; }
+        #logo {
+            font-size: clamp(3rem, 10vw, 5rem); font-weight: 900; letter-spacing: -2px;
+            margin-bottom: 0.5rem; display: flex; gap: 5px;
+        }
+        #logo span { display: inline-block; opacity: 0; animation: emerge 1.2s forwards; }
+        @keyframes emerge { to { opacity: 1; transform: translateY(0); filter: blur(0); } }
+        .tagline { font-size: 0.8rem; letter-spacing: 0.5em; opacity: 0.6; margin-bottom: 3rem; font-weight: 700; color: var(--primary); }
+        #enterBtn {
+            padding: 1.2rem 4rem; border-radius: 15px; border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.05); backdrop-filter: blur(10px);
+            color: #fff; font-size: 1rem; font-weight: 800; letter-spacing: 0.2em;
+            cursor: pointer; transition: 0.4s;
+        }
+        #enterBtn:hover { background: var(--primary); color: #000; box-shadow: 0 0 40px rgba(0,242,255,0.4); transform: translateY(-3px); }
+        footer { position: fixed; bottom: 30px; width: 100%; text-align: center; font-size: 0.7rem; opacity: 0.4; }
+        canvas { position: absolute; top: 0; left: 0; z-index: 1; pointer-events: none; }
+    </style>
+</head>
+<body>
+    <div class="bg-overlay"></div>
+    <div id="intro">
+        <h1 id="logo">
+            <span>H</span><span>o</span><span>l</span><span>a</span>
+            <span>&nbsp;</span>
+            <span>L</span><span>i</span><span>v</span><span>e</span>
+        </h1>
+        <div class="tagline">STREAM • TOKEN • ENERGY</div>
+        <button id="enterBtn">НЭВТРЭХ</button>
+    </div>
+    <canvas id="scene"></canvas>
+    <footer>© 2026 Hola Live. Бүх эрх хуулиар хамгаалагдсан.</footer>
+
+    <script>
+        document.querySelectorAll("#logo span").forEach((s, i) => {
+            s.style.transform = "translateY(30px)"; s.style.filter = "blur(10px)";
+            s.style.animationDelay = `${i * 0.1}s`;
+        });
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("scene"), alpha: true, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        camera.position.z = 5;
+
+        const geometry = new THREE.IcosahedronGeometry(1.5, 2);
+        const material = new THREE.MeshStandardMaterial({ color: 0x00f2ff, wireframe: true, transparent: true, opacity: 0.2 });
+        const mesh = new THREE.Mesh(geometry, material);
+        scene.add(mesh);
+        scene.add(new THREE.AmbientLight(0xffffff, 1));
+
+        function animate() {
+            requestAnimationFrame(animate);
+            mesh.rotation.y += 0.005; mesh.rotation.x += 0.003;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        document.getElementById("enterBtn").onclick = () => {
+            document.getElementById("intro").classList.add("hide");
+            setTimeout(() => { window.location.href = "app.html"; }, 800);
+        };
+    </script>
+</body>
+</html>
