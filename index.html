@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --bg: #05070f;
+            --panel: #101522;
+            --accent: #7df9ff;
+            --text: #eaf6ff;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+        body {
+            margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text);
+            padding: 20px; overflow-x: hidden;
+        }
+        h2 { font-weight: 800; letter-spacing: -1px; margin-bottom: 25px; }
+        
+        /* 📺 STREAM GRID */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        .stream-card {
+            background: var(--panel); border-radius: 20px; border: 1px solid var(--border);
+            overflow: hidden; cursor: pointer; transition: 0.3s; position: relative;
+        }
+        .stream-card:hover { transform: translateY(-8px); border-color: var(--accent); }
+        
+        .thumbnail {
+            width: 100%; aspect-ratio: 16/9; background: #1a2236; position: relative;
+            background-size: cover; background-position: center;
+        }
+        .live-tag {
+            position: absolute; top: 12px; left: 12px; background: #ff3344;
+            padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 900;
+        }
+        .viewers {
+            position: absolute; bottom: 12px; left: 12px; background: rgba(0,0,0,0.6);
+            padding: 4px 10px; border-radius: 6px; font-size: 11px; backdrop-filter: blur(5px);
+        }
+        .info { padding: 15px; }
+        .info h4 { margin: 0 0 5px 0; font-size: 16px; }
+        .info p { margin: 0; font-size: 13px; color: #9bb0c9; }
+        
+        .categories { display: flex; gap: 10px; margin-bottom: 30px; overflow-x: auto; padding-bottom: 10px; }
+        .cat-btn {
+            background: var(--panel); border: 1px solid var(--border); color: #fff;
+            padding: 8px 18px; border-radius: 99px; white-space: nowrap; font-size: 13px; cursor: pointer;
+        }
+        .cat-btn.active { background: var(--accent); color: #000; font-weight: 700; border-color: var(--accent); }
+    </style>
+</head>
+<body>
+
+    <div class="categories">
+        <button class="cat-btn active">Бүгд</button>
+        <button class="cat-btn">Тоглоом</button>
+        <button class="cat-btn">Чат</button>
+        <button class="cat-btn">Хөгжим</button>
+        <button class="cat-btn">Спорт</button>
+    </div>
+
+    <h2>🔥 Одоо шууд</h2>
+
+    <div class="grid" id="streamGrid">
+        </div>
+
+    <script>
+        const streams = [
+            { id: 1, user: "Bold_Gamer", title: "GTA 5 Roleplay Монгол", viewers: "1.2k", img: "https://picsum.photos/id/1/400/225" },
+            { id: 2, user: "Anu_B", title: "Оройн мэнд, хамтдаа ярилцъя ☕", viewers: "850", img: "https://picsum.photos/id/2/400/225" },
+            { id: 3, user: "Zorigoo", title: "PUBG Mobile Season 24", viewers: "3.4k", img: "https://picsum.photos/id/3/400/225" },
+            { id: 4, user: "Music_Lab", title: "Lo-Fi Beats to Relax 🎧", viewers: "210", img: "https://picsum.photos/id/4/400/225" },
+            { id: 5, user: "Chef_Tuya", title: "Амттай оройн хоол хийцгээе", viewers: "540", img: "https://picsum.photos/id/5/400/225" },
+            { id: 6, user: "Tech_MGL", title: "iPhone 17 Pro Max тойм", viewers: "2.1k", img: "https://picsum.photos/id/6/400/225" }
+        ];
+
+        const grid = document.getElementById('streamGrid');
+
+        streams.forEach(s => {
+            const card = document.createElement('div');
+            card.className = 'stream-card';
+            card.onclick = () => window.parent.location.href = 'app.html?room=' + s.id; // Жинхэнэ лайв руу шилжих
+            card.innerHTML = `
+                <div class="thumbnail" style="background-image: url('${s.img}')">
+                    <div class="live-tag">ШУУД</div>
+                    <div class="viewers">👤 ${s.viewers}</div>
+                </div>
+                <div class="info">
+                    <h4>${s.title}</h4>
+                    <p>${s.user}</p>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+    </script>
+</body>
+</html>
