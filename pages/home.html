@@ -3,106 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hola Live | Home</title>
     <style>
         :root {
-            --bg: #05070f;
-            --panel: #101522;
-            --accent: #7df9ff;
-            --text: #eaf6ff;
+            --primary: #00f2ff;
+            --secondary: #7000ff;
+            --bg: #050a14;
+            --panel: rgba(255, 255, 255, 0.03);
             --border: rgba(255, 255, 255, 0.1);
+            --text-main: #e6f1ff;
+            --live: #ff3344;
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
+
         body { 
-            margin: 0; padding: 20px; 
-            background: var(--bg); color: var(--text); 
-            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            padding: 25px;
+            min-height: 100vh;
             overflow-x: hidden;
         }
-        h2 { font-weight: 800; margin-bottom: 25px; display: flex; align-items: center; gap: 10px; }
-        
-        /* 📺 STREAM GRID */
+
+        /* Зөөлөн гэрэлтэлтүүд */
+        .glow {
+            position: fixed;
+            width: 50vw; height: 50vw;
+            background: radial-gradient(circle, rgba(0, 242, 255, 0.05) 0%, transparent 70%);
+            top: -20%; left: -10%; z-index: -1;
+        }
+
+        /* Категорийн хэсэг */
+        .categories {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 35px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            scrollbar-width: none; /* Firefox */
+        }
+        .categories::-webkit-scrollbar { display: none; } /* Chrome, Safari */
+
+        .cat-btn {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            white-space: nowrap;
+        }
+        .cat-btn:hover { border-color: var(--primary); background: rgba(0, 242, 255, 0.05); }
+        .cat-btn.active { background: var(--primary); color: #000; border-color: var(--primary); font-weight: 800; }
+
+        h2 { font-size: 24px; font-weight: 900; margin-bottom: 25px; letter-spacing: -0.5px; display: flex; align-items: center; gap: 10px; }
+        h2 span { color: var(--live); }
+
+        /* Стрим Grid */
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 25px;
         }
-        .stream-card {
-            background: var(--panel); border-radius: 20px; border: 1px solid var(--border);
-            overflow: hidden; cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-        }
-        .stream-card:hover { transform: translateY(-10px); border-color: var(--accent); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        
-        .thumbnail {
-            width: 100%; aspect-ratio: 16/9; background: #1a2236; position: relative;
-            background-size: cover; background-position: center;
-        }
-        .live-tag {
-            position: absolute; top: 12px; left: 12px; background: #ff3344;
-            padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 900;
-            box-shadow: 0 0 15px rgba(255, 51, 68, 0.4);
-        }
-        .viewers {
-            position: absolute; bottom: 12px; left: 12px; background: rgba(0,0,0,0.7);
-            padding: 4px 10px; border-radius: 6px; font-size: 11px; backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        .info { padding: 15px; }
-        .info h4 { margin: 0 0 5px 0; font-size: 16px; font-weight: 700; color: #fff; }
-        .info p { margin: 0; font-size: 13px; color: #8a99ad; }
 
-        /* Ангилал */
-        .categories { display: flex; gap: 10px; margin-bottom: 30px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
-        .cat-btn {
-            background: var(--panel); border: 1px solid var(--border); color: #fff;
-            padding: 10px 22px; border-radius: 99px; white-space: nowrap; font-size: 13px; cursor: pointer; transition: 0.3s;
+        .stream-card {
+            background: transparent;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: 0.3s;
         }
-        .cat-btn.active { background: var(--accent); color: #000; font-weight: 800; border-color: var(--accent); }
+
+        .thumb-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            margin-bottom: 12px;
+        }
+
+        .thumb-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.5s ease;
+        }
+
+        .stream-card:hover .thumb-img { transform: scale(1.05); }
+
+        .live-badge {
+            position: absolute;
+            top: 10px; left: 10px;
+            background: var(--live);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+
+        .viewer-count {
+            position: absolute;
+            bottom: 10px; left: 10px;
+            background: rgba(0,0,0,0.7);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            backdrop-filter: blur(5px);
+        }
+
+        .stream-info { display: flex; gap: 12px; }
+        .avatar {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            flex-shrink: 0;
+            border: 2px solid var(--bg);
+            box-shadow: 0 0 0 2px var(--primary);
+        }
+
+        .details h4 { font-size: 16px; font-weight: 700; margin-bottom: 4px; line-height: 1.2; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
+        .details p { font-size: 13px; color: #8a99ad; }
+        .category-tag { font-size: 11px; color: var(--primary); background: rgba(0, 242, 255, 0.1); padding: 2px 8px; border-radius: 4px; margin-top: 5px; display: inline-block; }
+
     </style>
 </head>
 <body>
 
+    <div class="glow"></div>
+
     <div class="categories">
         <button class="cat-btn active">Бүгд</button>
-        <button class="cat-btn">Тоглоом</button>
-        <button class="cat-btn">Чат</button>
-        <button class="cat-btn">Хөгжим</button>
-        <button class="cat-btn">Спорт</button>
+        <button class="cat-btn">IRL</button>
+        <button class="cat-btn">Gaming</button>
+        <button class="cat-btn">Music</button>
+        <button class="cat-btn">Art</button>
+        <button class="cat-btn">Tech</button>
+        <button class="cat-btn">Esports</button>
     </div>
 
-    <h2><span>🔥</span> Одоо шууд</h2>
+    <h2><span>●</span> Одоо шууд</h2>
 
     <div class="grid" id="streamGrid">
         </div>
 
     <script>
+        // Жишээ өгөгдөл
         const streams = [
-            { id: 1, user: "Bold_Gamer", title: "GTA 5 Roleplay Монгол", viewers: "1.2k", img: "https://picsum.photos/id/10/400/225" },
-            { id: 2, user: "Anu_B", title: "Оройн мэнд, хамтдаа ярилцъя ☕", viewers: "850", img: "https://picsum.photos/id/20/400/225" },
-            { id: 3, user: "Zorigoo", title: "PUBG Mobile Season 24", viewers: "3.4k", img: "https://picsum.photos/id/30/400/225" },
-            { id: 4, user: "Music_Lab", title: "Lo-Fi Beats to Relax 🎧", viewers: "210", img: "https://picsum.photos/id/40/400/225" },
-            { id: 5, user: "Chef_Tuya", title: "Амттай оройн хоол хийцгээе", viewers: "540", img: "https://picsum.photos/id/50/400/225" },
-            { id: 6, user: "Tech_MGL", title: "iPhone 17 Pro Max тойм", viewers: "2.1k", img: "https://picsum.photos/id/60/400/225" }
+            { id: 1, user: "Bold_Gamer", title: "GTA 5 Монгол сервер дээр адал явдал!", viewers: "1.2k", cat: "Gaming", img: "https://picsum.photos/id/1/600/337", avatar: "B" },
+            { id: 2, user: "Anuka_Live", title: "Оройг хамтдаа ярилцаж өнгөрөөе ✨", viewers: "850", cat: "IRL", img: "https://picsum.photos/id/2/600/337", avatar: "A" },
+            { id: 3, user: "Tech_MGL", title: "Шинэ iPhone задалж үзэх үү?", viewers: "2.4k", cat: "Tech", img: "https://picsum.photos/id/3/600/337", avatar: "T" },
+            { id: 4, user: "Zorigoo", title: "PUBG Mobile - Тэмцээний бэлтгэл", viewers: "5.1k", cat: "Gaming", img: "https://picsum.photos/id/4/600/337", avatar: "Z" },
+            { id: 5, user: "DJ_Bat", title: "Deep House Mix 2026 🎧", viewers: "320", cat: "Music", img: "https://picsum.photos/id/5/600/337", avatar: "D" },
+            { id: 6, user: "Art_Tuya", title: "Digital Portrait зурж сурцгаая", viewers: "110", cat: "Art", img: "https://picsum.photos/id/6/600/337", avatar: "A" }
         ];
 
         const grid = document.getElementById('streamGrid');
 
+        // Стримүүдийг үүсгэх
         streams.forEach(s => {
             const card = document.createElement('div');
             card.className = 'stream-card';
-            
-            // Iframe дотроос parent (app.html) руу команд өгөх
             card.onclick = () => {
-                alert(s.user + "-ийн лайв руу холбогдож байна...");
+                // app.html доторх iframe учраас alert эсвэл шилжилт хийнэ
+                console.log(`Joining ${s.user}'s room...`);
+                alert(`${s.user}-ийн лайв руу холбогдож байна.`);
             };
 
             card.innerHTML = `
-                <div class="thumbnail" style="background-image: url('${s.img}')">
-                    <div class="live-tag">ШУУД</div>
-                    <div class="viewers">👤 ${s.viewers}</div>
+                <div class="thumb-wrapper">
+                    <img class="thumb-img" src="${s.img}" alt="thumbnail">
+                    <div class="live-badge">Live</div>
+                    <div class="viewer-count">👤 ${s.viewers}</div>
                 </div>
-                <div class="info">
-                    <h4>${s.title}</h4>
-                    <p>${s.user}</p>
+                <div class="stream-info">
+                    <div class="avatar" style="display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; color: white;">${s.avatar}</div>
+                    <div class="details">
+                        <h4>${s.title}</h4>
+                        <p>${s.user}</p>
+                        <span class="category-tag">${s.cat}</span>
+                    </div>
                 </div>
             `;
             grid.appendChild(card);
